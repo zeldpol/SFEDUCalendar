@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:title="Календари"
+        >
+        <menu>
+            <group
+                android:id="@+id/second"
+                android:checkableBehavior="none">
+
+                <item xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:id="@+id/Calendar1"
+                    android:title="Календарь 1"
+                    app:actionLayout="@layout/menu_swich"
+                    app:showAsAction="never" />
+
+                <item xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:id="@+id/Calendar2"
+                    android:title="Календарь 2"
+                    app:actionLayout="@layout/menu_swich"
+                    app:showAsAction="never" />
+
+                <item xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/Calendar3"
+                    android:title="Календарь 3"
+                    app:actionLayout="@layout/menu_swich"
+                    app:showAsAction="never" />
+
+            </group>
+        </menu>
+    </item>
+
+</menu>
