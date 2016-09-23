@@ -29,6 +29,10 @@
 
     </style>
 
+    <style name="MyButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="backgroundTint">@color/button_background_selector</item>
+        <item name="android:textColor">@color/button_text_selector</item>
+    </style>
 
 
 </resources>

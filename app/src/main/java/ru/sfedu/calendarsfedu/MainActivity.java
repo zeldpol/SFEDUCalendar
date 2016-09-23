@@ -17,6 +17,7 @@ import android.widget.CompoundButton;
 
 import android.widget.Toast;
 import static android.widget.Toast.LENGTH_SHORT;
+
 import com.squareup.timessquare.CalendarPickerView;
 
 import java.nio.channels.AlreadyBoundException;
@@ -26,7 +27,8 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private CalendarPickerView calendarPickerView;
-
+    public static  String atoken;
+    public static  String HOST="http://46.101.100.248:8000/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
