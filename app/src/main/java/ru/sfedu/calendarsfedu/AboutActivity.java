@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+
 public class AboutActivity extends AppCompatActivity {
 
     ImageView about;
