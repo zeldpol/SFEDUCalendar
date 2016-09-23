@@ -5,12 +5,10 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
-import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,13 +18,14 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import static android.widget.Toast.LENGTH_LONG;
-import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class RegActivity extends AppCompatActivity {
@@ -44,7 +43,18 @@ public class RegActivity extends AppCompatActivity {
     private String email;
     private String password;
     private String group;
-    View focusView;
+    private View focusView;
+
+    public static boolean isEmailValid(String email) {
+
+        return email.contains("@") && email.length() >= MainActivity.USER_EMAIL_MIN_LENGTH && email.contains(".");
+    }
+
+    public static boolean isPasswordValid(String password) {
+
+        return password.length() >= MainActivity.USER_PASSWORD_MIN_LENGTH;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,42 +88,47 @@ public class RegActivity extends AppCompatActivity {
 
                 if (!IsValid())
                     focusView.requestFocus();
-                    else
-                new ProgressTask().execute();
+                else {
+                    // Проверки прошли
+
+                    PostRegistration PostReg = new PostRegistration();
+                    PostReg.execute();
+
+                }
 
             }
         });
 
     }
-    private boolean isEmailValid(String email) {
-
-        return email.contains("@") && email.length() > 4 &&  email.contains(".");
-    }
-    private boolean isPasswordValid(String password) {
-
-        return  password.length() > 4 ;
-    }
 
     public boolean IsValid() {
         boolean res = true;
 
-        if (!isPasswordValid(password) ) {
-            Epassword.setError("Пароль должен содержать не менее 4 символов");
+        if (!group.isEmpty()) {
+            if (group.length() < 7) {
+                Egroup.setError("Группа должена содержать не менее " + Integer.toString(MainActivity.USER_GROUP_MIN_LENGTH) + " символов");
+                focusView = Egroup;
+                res = false;
+            }
+        }
+
+        if (!isPasswordValid(password)) {
+            Epassword.setError("Пароль должен содержать не менее " + Integer.toString(MainActivity.USER_PASSWORD_MIN_LENGTH) + " символов");
             focusView = Epassword;
             res = false;
         }
 
-        if (!isEmailValid(email) ) {
+        if (!isEmailValid(email)) {
             Eemail.setError("Некорректный E-mail");
             focusView = Eemail;
             res = false;
         }
-        if (surname.length() < 1 ) {
+        if (surname.length() < 1) {
             Esurname.setError("Поле не может быть пустым");
             focusView = Esurname;
             res = false;
         }
-        if (firstname.length() < 1 ) {
+        if (firstname.length() < 1) {
             Efirstname.setError("Поле не может быть пустым");
             focusView = Efirstname;
             res = false;
@@ -122,100 +137,132 @@ public class RegActivity extends AppCompatActivity {
         return res;
     }
 
-    class ProgressTask extends AsyncTask<String, Void, String> {
+    class PostRegistration extends AsyncTask<String, Void, String> {
+
         @Override
         protected String doInBackground(String... path) {
 
             String content;
+
             String param = null;
+
             try {
-            param ="firstname=" + URLEncoder.encode(firstname, "UTF-8") +
+                param = "firstname=" + URLEncoder.encode(firstname, "UTF-8") +
                         "&surname=" + URLEncoder.encode(surname, "UTF-8") +
-                    "&email=" + URLEncoder.encode(email, "UTF-8") +
-                    "&password=" + URLEncoder.encode(password, "UTF-8") +
-                    "&group=" + URLEncoder.encode(group, "UTF-8");
+                        "&email=" + URLEncoder.encode(email, "UTF-8") +
+                        "&password=" + URLEncoder.encode(password, "UTF-8");
 
-            } catch(UnsupportedEncodingException ex) {content = "Error: "+ex.getMessage();}
 
-            try{
+                if(!group.isEmpty())
+                    param += "&group=" + URLEncoder.encode(group, "UTF-8");
 
-                content = getContent(MainActivity.HOST+"api/users/register",param);
+
+            } catch (UnsupportedEncodingException ex) {
+                content = "Error: " + ex.getMessage();
             }
-            catch (IOException ex){
-                content = "Error: "+ex.getMessage();
+
+
+            try {
+
+                content = getContent(MainActivity.HOST + "api/users/register", param);
+            } catch (IOException ex) {
+                content = "Error: " + ex.getMessage();
 
             }
 
             return content;
         }
-        @Override
-        protected void onProgressUpdate(Void... items) {
-        }
+
         @Override
         protected void onPostExecute(String content) {
 
-
-            if(content.contains("Error")) {
+            if (content.contains("Error")) {
                 Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
                 return;
             }
 
-                String success = "";
-            try
-            {
-            JSONObject reader = new JSONObject(content);
-                success = reader.getString("success");
-                if(success == "true") {
+
+            try {
+                JSONObject reader = new JSONObject(content);
+
+                if (content.contains("success\":true")) {
+
                     MainActivity.atoken = reader.getString("token");
                     Toast.makeText(getApplicationContext(), "Удачно, ваш токен господин: " + MainActivity.atoken, LENGTH_LONG).show();
                     // Удачная рега
-                }
-                else
-                {
+
+                } else {
+
+                    if (content.contains("User with such email or username already exist")) {
+                        Eemail.setError("Пользователь с таким E-mail уже существует");
+                        focusView = Eemail;
+                        focusView.requestFocus();
+                        return;
+                    }
+
+
+                    if (content.contains("Bad request")) {
+
+                        btn_registration.setError("Проверьте правильность введенных данных");
+                        focusView = btn_registration;
+                        focusView.requestFocus();
+                        return;
+                    }
+
+
                     Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
 
                 }
 
-
-         }
-            catch (JSONException e) {content = "Error: "+e.getMessage();}
-
-
-
-
+            } catch (JSONException e) {
+                content = "Error: " + e.getMessage();
+                Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
+            }
         }
 
-        private String getContent(String path,String urlParameters) throws IOException {
-            BufferedReader reader=null;
+        private String getContent(String path, String urlParameters) throws IOException {
+
+            BufferedReader reader = null;
+            StringBuilder buf = new StringBuilder();
             try {
-                URL url=new URL(path);
-                HttpURLConnection c=(HttpURLConnection)url.openConnection();
+
+                URL url = new URL(path);
+
+                HttpURLConnection c = (HttpURLConnection) url.openConnection();
+
                 c.setRequestMethod("POST");
-                c.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                c.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
                 c.setReadTimeout(10000);
                 c.setDoOutput(true);
 
-                DataOutputStream wr = new DataOutputStream (
-                        c.getOutputStream ());
-                wr.writeBytes (urlParameters);
-                wr.flush ();
-                wr.close ();
+                DataOutputStream wr = new DataOutputStream(c.getOutputStream());
+
+                wr.writeBytes(urlParameters);
+                wr.flush();
+                wr.close();
 
                 c.connect();
 
+                InputStream inputStream = null;
+
+                try {
+                    inputStream = c.getInputStream();
+                } catch (IOException exception) {
+                    inputStream = c.getErrorStream();
+                }
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
 
 
-                reader= new BufferedReader(new InputStreamReader(c.getInputStream()));
-                StringBuilder buf=new StringBuilder();
-                String line=null;
+                String line = null;
 
-                while ((line=reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null) {
                     buf.append(line + "\n");
                 }
-                return(buf.toString());
-            }
-            finally {
+
+                return (buf.toString());
+            } finally {
                 if (reader != null) {
                     reader.close();
                 }

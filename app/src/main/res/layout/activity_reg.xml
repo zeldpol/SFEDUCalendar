@@ -100,11 +100,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            android:text="Уже есть учетная запись"
+            android:text="У меня уже есть учетная запись"
             android:gravity="center"
             android:textSize="16dip"
             android:clickable="true"
-            android:enabled="true" />
+            android:enabled="true"
+            />
+
 
     </LinearLayout>
 </ScrollView>
