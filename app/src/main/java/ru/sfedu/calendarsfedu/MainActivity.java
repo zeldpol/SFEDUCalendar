@@ -27,8 +27,13 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private CalendarPickerView calendarPickerView;
-    public static  String atoken;
-    public static  String HOST="http://46.101.100.248:8000/";
+
+    public static  String atoken="";
+    public static final  String HOST="http://46.101.100.248:8000/";
+    public static final int USER_PASSWORD_MIN_LENGTH =6;
+    public static final int USER_EMAIL_MIN_LENGTH =6;
+    public static final int USER_GROUP_MIN_LENGTH = 7;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
