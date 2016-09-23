@@ -78,7 +78,7 @@ public class RegActivity extends AppCompatActivity {
 
                 if (!IsValid())
                     focusView.requestFocus();
-                 //   else
+                    else
                 new ProgressTask().execute();
 
             }
@@ -167,6 +167,7 @@ public class RegActivity extends AppCompatActivity {
                 success = reader.getString("success");
                 if(success == "true") {
                     MainActivity.atoken = reader.getString("token");
+                    Toast.makeText(getApplicationContext(), "Удачно, ваш токен господин: " + MainActivity.atoken, LENGTH_LONG).show();
                     // Удачная рега
                 }
                 else
