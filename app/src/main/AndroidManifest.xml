@@ -29,7 +29,7 @@
             android:label="@string/title_activity_scrolling" />
         <activity android:name=".AboutActivity" />
         <activity android:name=".RegActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
     </application>
 
 </manifest>

@@ -19,7 +19,7 @@
 
     <style name="MySwitch" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="colorControlActivated">@color/custom_background_today</item>
 
         <!-- inactive thumb color -->
         <item name="colorSwitchThumbNormal">@color/custom_text_inactive</item>
@@ -33,6 +33,8 @@
         <item name="backgroundTint">@color/button_background_selector</item>
         <item name="android:textColor">@color/button_text_selector</item>
     </style>
+
+
 
 
 </resources>
