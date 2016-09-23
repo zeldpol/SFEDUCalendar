@@ -143,6 +143,9 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
         }
+        if(id == android.R.id.home)
+            this.finish();
+
 
 
         return super.onOptionsItemSelected(item);
