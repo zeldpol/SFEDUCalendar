@@ -8,5 +8,9 @@
     <string name="action_about">О программе</string>
     <string name="title_activity_scrolling">Расписание</string>
 
+    <string name="title_activity_fullscreen_about">FullscreenAbout</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 
 </resources>
