@@ -22,7 +22,7 @@ public class AboutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("");
-        
+
         about = (ImageView)findViewById(R.id.aboutimage);
         about.setOnClickListener(new View.OnClickListener() {
             @Override
