@@ -1,5 +1,6 @@
 package ru.sfedu.calendarsfedu;
 
+import android.content.Context;
 import android.os.Bundle;
 
 
@@ -7,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,8 @@ import com.squareup.timessquare.CalendarPickerView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -168,5 +172,26 @@ public class MainActivity extends AppCompatActivity
         /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);*/
         return true;
+    }
+
+    public static void ShowDialog(Context cont, String message, int timeout) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(cont);
+        builder.setTitle("");
+        builder.setMessage(message);
+        builder.setCancelable(true);
+
+        final AlertDialog dlg = builder.create();
+
+        dlg.show();
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                dlg.dismiss();
+                timer.cancel();
+
+            }
+        }, timeout);
     }
 }
