@@ -1,5 +1,7 @@
 package ru.sfedu.calendarsfedu;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -38,6 +40,8 @@ public class RegActivity extends AppCompatActivity {
     private AppCompatButton btn_registration;
     private TextView link_login;
 
+    private ProgressDialog dialog;
+
     private String firstname;
     private String surname;
     private String email;
@@ -55,6 +59,20 @@ public class RegActivity extends AppCompatActivity {
         return password.length() >= MainActivity.USER_PASSWORD_MIN_LENGTH;
     }
 
+
+    private void ShowProgress(boolean show,String message,Context cont)
+    {
+        if(dialog==null)
+            dialog = new ProgressDialog(cont);
+
+        dialog.setMessage(message);
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        if(show)
+            dialog.show();
+        else
+            dialog.dismiss();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +108,7 @@ public class RegActivity extends AppCompatActivity {
                     focusView.requestFocus();
                 else {
                     // Проверки прошли
-
+                    ShowProgress(true,"Регистрация...",RegActivity.this);
                     PostRegistration PostReg = new PostRegistration();
                     PostReg.execute();
 
@@ -105,8 +123,14 @@ public class RegActivity extends AppCompatActivity {
         boolean res = true;
 
         if (!group.isEmpty()) {
-            if (group.length() < 7) {
+            if (group.length() < MainActivity.USER_GROUP_MIN_LENGTH) {
                 Egroup.setError("Группа должена содержать не менее " + Integer.toString(MainActivity.USER_GROUP_MIN_LENGTH) + " символов");
+                focusView = Egroup;
+                res = false;
+            }
+            if(group.length() < MainActivity.USER_GROUP_MIN_LENGTH)
+            {
+                Egroup.setError("Группа не может содержать более " + Integer.toString(MainActivity.USER_GROUP_MAX_LENGTH) + " символов");
                 focusView = Egroup;
                 res = false;
             }
@@ -123,13 +147,13 @@ public class RegActivity extends AppCompatActivity {
             focusView = Eemail;
             res = false;
         }
-        if (surname.length() < 1) {
-            Esurname.setError("Поле не может быть пустым");
+        if (surname.length() < MainActivity.USER_FIRSTNAME_MIN_LENGTH) {
+            Esurname.setError("Имя должено содержать не менее "+ Integer.toString(MainActivity.USER_FIRSTNAME_MIN_LENGTH) +" символов");
             focusView = Esurname;
             res = false;
         }
-        if (firstname.length() < 1) {
-            Efirstname.setError("Поле не может быть пустым");
+        if (firstname.length() < MainActivity.USER_SECONDNAME_MIN_LENGTH) {
+            Efirstname.setError("Фамилия должена содержать не менее "+ Integer.toString(MainActivity.USER_SECONDNAME_MIN_LENGTH) +" символов");
             focusView = Efirstname;
             res = false;
         }
@@ -176,6 +200,8 @@ public class RegActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String content) {
 
+            ShowProgress(false,"",RegActivity.this);
+
             if (content.contains("Error")) {
                 Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
                 return;
@@ -202,7 +228,7 @@ public class RegActivity extends AppCompatActivity {
 
 
                     if (content.contains("Bad request")) {
-
+                        Toast.makeText(getApplicationContext(), "Проверьте правильность введенных данных, ошибка: "+ content, LENGTH_LONG).show();
                         btn_registration.setError("Проверьте правильность введенных данных");
                         focusView = btn_registration;
                         focusView.requestFocus();

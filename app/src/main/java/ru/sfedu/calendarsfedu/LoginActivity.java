@@ -1,13 +1,19 @@
 package ru.sfedu.calendarsfedu;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,10 +38,25 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton btn_sign_in;
     private TextView link_reg;
 
-    private String email;
-    private String password;
     private View focusView;
 
+    private String email;
+    private String password;
+    private ProgressDialog dialog;
+
+    private void ShowProgress(boolean show,String message,Context cont)
+    {
+        if(dialog==null)
+        dialog = new ProgressDialog(cont);
+
+        dialog.setMessage(message);
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        if(show)
+        dialog.show();
+        else
+            dialog.dismiss();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +85,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 password = Epassword.getText().toString();
                 email = Eemail.getText().toString();
+
+
+
+
                if(!IsValid())
                    focusView.requestFocus();
                 else
                {
+                   ShowProgress(true,"Авторизация...",LoginActivity.this);
                    PostLogin PostLog = new PostLogin();
                    PostLog.execute();
                     // Проверки прошли
@@ -130,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String content) {
 
+            ShowProgress(false,"",LoginActivity.this);
 
             if(content.contains("Error")) {
                 Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
@@ -140,14 +167,24 @@ public class LoginActivity extends AppCompatActivity {
             try
             {
                 JSONObject reader = new JSONObject(content);
-                success = reader.getString("success");
-                if(success == "true") {
+                if (content.contains("success\":true")) {
                     MainActivity.atoken = reader.getString("token");
                     Toast.makeText(getApplicationContext(), "Удачно, ваш токен господин: " + MainActivity.atoken, LENGTH_LONG).show();
                     // Удачная авторизация
                 }
                 else
                 {
+                    if (content.contains("Wrong credentials")) {
+                        Eemail.setError("Неправильный логин или пароль");
+                        focusView = Eemail;
+                        focusView.requestFocus();
+                        return;
+                    }
+
+                    if (content.contains("Bad request")) {
+                        Toast.makeText(getApplicationContext(), "Проверьте правильность введенных данных, ошибка: "+ content, LENGTH_LONG).show();
+                        return;
+                    }
 
                     Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
 
@@ -217,5 +254,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 }

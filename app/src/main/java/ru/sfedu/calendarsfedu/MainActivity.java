@@ -20,7 +20,6 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 import com.squareup.timessquare.CalendarPickerView;
 
-import java.nio.channels.AlreadyBoundException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -33,6 +32,9 @@ public class MainActivity extends AppCompatActivity
     public static final int USER_PASSWORD_MIN_LENGTH =6;
     public static final int USER_EMAIL_MIN_LENGTH =6;
     public static final int USER_GROUP_MIN_LENGTH = 7;
+    public static final int USER_GROUP_MAX_LENGTH = 8;
+    public static final int USER_FIRSTNAME_MIN_LENGTH = 2;
+    public static final int USER_SECONDNAME_MIN_LENGTH = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
