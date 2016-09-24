@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.EditText;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,8 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-
-import static android.widget.Toast.LENGTH_LONG;
 
 
 public class RegActivity extends AppCompatActivity {
@@ -128,7 +125,8 @@ public class RegActivity extends AppCompatActivity {
                 focusView = Egroup;
                 res = false;
             }
-            if(group.length() < MainActivity.USER_GROUP_MIN_LENGTH)
+
+            if(group.length() > MainActivity.USER_GROUP_MAX_LENGTH)
             {
                 Egroup.setError("Группа не может содержать более " + Integer.toString(MainActivity.USER_GROUP_MAX_LENGTH) + " символов");
                 focusView = Egroup;
@@ -201,9 +199,16 @@ public class RegActivity extends AppCompatActivity {
         protected void onPostExecute(String content) {
 
             ShowProgress(false,"",RegActivity.this);
+            if(!content.contains("\"success\":"))
+            {
+                MainActivity.ShowDialog(RegActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение",5000);
+                return;
+            }
+
 
             if (content.contains("Error")) {
-                Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
+
+                MainActivity.ShowDialog(RegActivity.this, content,5000);
                 return;
             }
 
@@ -214,7 +219,7 @@ public class RegActivity extends AppCompatActivity {
                 if (content.contains("success\":true")) {
 
                     MainActivity.atoken = reader.getString("token");
-                    Toast.makeText(getApplicationContext(), "Удачно, ваш токен господин: " + MainActivity.atoken, LENGTH_LONG).show();
+                    MainActivity.ShowDialog(RegActivity.this, "Удачно, ваш токен господин: " + MainActivity.atoken,5000);
                     // Удачная рега
 
                 } else {
@@ -228,21 +233,20 @@ public class RegActivity extends AppCompatActivity {
 
 
                     if (content.contains("Bad request")) {
-                        Toast.makeText(getApplicationContext(), "Проверьте правильность введенных данных, ошибка: "+ content, LENGTH_LONG).show();
+                        MainActivity.ShowDialog(RegActivity.this, "Проверьте правильность введенных данных. "+ content,5000);
                         btn_registration.setError("Проверьте правильность введенных данных");
                         focusView = btn_registration;
                         focusView.requestFocus();
                         return;
                     }
 
-
-                    Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
+                    MainActivity.ShowDialog(RegActivity.this, content,4000);
 
                 }
 
             } catch (JSONException e) {
                 content = "Error: " + e.getMessage();
-                Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
+                MainActivity.ShowDialog(RegActivity.this, content,5000);
             }
         }
 
@@ -275,19 +279,29 @@ public class RegActivity extends AppCompatActivity {
                 try {
                     inputStream = c.getInputStream();
                 } catch (IOException exception) {
-                    inputStream = c.getErrorStream();
+                    try {
+                        inputStream = c.getErrorStream();
+                    }
+                    catch(Exception e)
+                    {
+                        return ("Error: Нет соединения с сервером");
+                    }
                 }
+                if(inputStream!=null) {
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                reader = new BufferedReader(new InputStreamReader(inputStream));
 
+                    String line = null;
 
-                String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        buf.append(line + "\n");
+                    }
 
-                while ((line = reader.readLine()) != null) {
-                    buf.append(line + "\n");
+                    return (buf.toString());
                 }
+                else
+                    return ("Error: Нет соединения с сервером");
 
-                return (buf.toString());
             } finally {
                 if (reader != null) {
                     reader.close();

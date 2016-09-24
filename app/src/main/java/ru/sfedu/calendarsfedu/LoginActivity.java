@@ -1,21 +1,16 @@
 package ru.sfedu.calendarsfedu;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +25,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-import static android.widget.Toast.LENGTH_LONG;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText Epassword;
@@ -57,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         else
             dialog.dismiss();
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 password = Epassword.getText().toString();
                 email = Eemail.getText().toString();
-
 
 
 
@@ -132,7 +126,8 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... path) {
 
-            String content;
+            String content = null;
+
             String param = null;
             try {
                 param ="email=" + URLEncoder.encode(email, "UTF-8") +
@@ -158,8 +153,16 @@ public class LoginActivity extends AppCompatActivity {
 
             ShowProgress(false,"",LoginActivity.this);
 
+
+            if(!content.contains("\"success\":"))
+            {
+                MainActivity.ShowDialog(LoginActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение",5000);
+                return;
+            }
+
             if(content.contains("Error")) {
-                Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
+
+                MainActivity.ShowDialog(LoginActivity.this, content,4000);
                 return;
             }
 
@@ -169,7 +172,7 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject reader = new JSONObject(content);
                 if (content.contains("success\":true")) {
                     MainActivity.atoken = reader.getString("token");
-                    Toast.makeText(getApplicationContext(), "Удачно, ваш токен господин: " + MainActivity.atoken, LENGTH_LONG).show();
+                    MainActivity.ShowDialog(LoginActivity.this,"Удачно, ваш токен господин: " + MainActivity.atoken,4000);
                     // Удачная авторизация
                 }
                 else
@@ -182,12 +185,11 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     if (content.contains("Bad request")) {
-                        Toast.makeText(getApplicationContext(), "Проверьте правильность введенных данных, ошибка: "+ content, LENGTH_LONG).show();
+                        MainActivity.ShowDialog(LoginActivity.this,"Проверьте правильность введенных данных: "+ content,6000);
                         return;
                     }
 
-                    Toast.makeText(getApplicationContext(), "Ошибка: " + content, LENGTH_LONG).show();
-
+                    MainActivity.ShowDialog(LoginActivity.this, content,4000);
                 }
 
 
@@ -230,10 +232,16 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 catch(IOException exception)
                 {
-                    inputStream = c.getErrorStream();
+                    try {
+                        inputStream = c.getErrorStream();
+                         }
+                        catch(Exception e)
+                        {
+                            return ("Error: Нет соединения с сервером");
+                        }
                 }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
+                if(inputStream!=null) {
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
 
 
                     String line = null;
@@ -242,8 +250,9 @@ public class LoginActivity extends AppCompatActivity {
                         buf.append(line + "\n");
                     }
                     return (buf.toString());
-
-
+                }
+                    else
+                    return ("Error: Нет соединения с сервером");
 
             }
             finally {
