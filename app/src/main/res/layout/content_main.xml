@@ -8,20 +8,6 @@
     tools:context="ru.sfedu.calendarsfedu.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <com.squareup.timessquare.CalendarPickerView
-        android:id="@+id/calendar_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:drawSelectorOnTop="false"
-        android:layoutMode="clipBounds"
-        android:scrollbarStyle="outsideOverlay"
-        android:clipToPadding="false"
-        android:background="@color/custom_background"
-        app:tsquare_dayBackground="@drawable/custom_calendar_bg_selector"
-        app:tsquare_dayTextColor="@color/custom_calendar_text_selector"
-        app:tsquare_dividerColor="@color/transparent"
-        app:tsquare_titleTextColor="@color/custom_calendar_text_selector"
-        app:tsquare_headerTextColor="@color/custom_header_text"/>
+
 
 </RelativeLayout>

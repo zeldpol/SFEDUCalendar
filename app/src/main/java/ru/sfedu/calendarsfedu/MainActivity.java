@@ -3,15 +3,21 @@ package ru.sfedu.calendarsfedu;
 import android.content.Context;
 import android.os.Bundle;
 
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+
 
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -20,16 +26,21 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 import static android.widget.Toast.LENGTH_SHORT;
 
-import com.squareup.timessquare.CalendarPickerView;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private CalendarPickerView calendarPickerView;
+
+
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+
+
 
     public static  String atoken="";
     public static final  String HOST="http://46.101.100.248:8000/";
@@ -47,6 +58,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.setCurrentItem(1);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -56,45 +77,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-//Create min date
-        Date today = new Date();
-        //Create max date
-        Calendar YearNow = Calendar.getInstance();
 
-        Calendar nextYear = Calendar.getInstance();
-
-        //Add a year from Now
-        nextYear.add(Calendar.YEAR, 1);
-        YearNow.add(Calendar.YEAR, -1);
-
-
-        //Find the calendar inside your view
-        calendarPickerView = (CalendarPickerView) findViewById(R.id.calendar_view);
-
-
-        //Init the calendar with Date Range ( from date -> to date )
-        calendarPickerView.init(YearNow.getTime(), nextYear.getTime()).withSelectedDate(today);
-
-        calendarPickerView.setCellClickInterceptor(new CalendarPickerView.CellClickInterceptor() {
-            @Override
-            public boolean onCellClicked(Date date) {
-
-
-                Intent intent = new Intent(MainActivity.this, ScrollingActivity.class);
-                startActivity(intent);
-
-
-                /*DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
-
-                String dateNow = df.format(calendarPickerView.getSelectedDate().getTime());
-
-                String toast = "Selected: " + dateNow;
-                Toast.makeText(getApplicationContext(), toast, LENGTH_SHORT).show();*/
-
-
-                return false;
-            }
-        });
 
         MenuItem item = navigationView.getMenu().findItem(R.id.Calendar1);
         SwitchCompat switchCompat = (SwitchCompat) item.getActionView().findViewById(R.id.Calendar1);
@@ -193,5 +176,44 @@ public class MainActivity extends AppCompatActivity
 
             }
         }, timeout);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        adapter.addFragment(new TodayFragmen(), "Сегодня");
+        adapter.addFragment(new MonthFragment(), "Месяц");
+        adapter.addFragment(new WeekFragment(), "Неделя");
+
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 }
