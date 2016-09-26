@@ -67,6 +67,28 @@ public class MonthFragment extends Fragment{
         final CalendarPickerView calendar = (CalendarPickerView) viewer.findViewById(R.id.calendar_view);
         calendar.init(YearNow.getTime(), nextYear.getTime()).withSelectedDate(today);
 
+        calendar.setCellClickInterceptor(new CalendarPickerView.CellClickInterceptor() {
+            @Override
+            public boolean onCellClicked(Date date) {
+
+
+                Intent intent = new Intent(getActivity(), ScrollingActivity.class);
+                startActivity(intent);
+
+
+                /*DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
+
+                String dateNow = df.format(calendarPickerView.getSelectedDate().getTime());
+
+                String toast = "Selected: " + dateNow;
+                Toast.makeText(getApplicationContext(), toast, LENGTH_SHORT).show();*/
+
+
+                return false;
+            }
+        });
+
+
         return viewer;
 
     }

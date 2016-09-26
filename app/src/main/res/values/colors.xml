@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#257b2b</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#FF9105</color>
 
     <color name="custom_header_text">#257b2b</color>
     <color name="custom_selected">#257b2b</color>

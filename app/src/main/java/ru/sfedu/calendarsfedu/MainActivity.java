@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setTitle("Календарь ЮФУ");
 
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
+        final Intent intent = new Intent(MainActivity.this, RegActivity.class);
 
         MenuItem item = navigationView.getMenu().findItem(R.id.Calendar1);
         SwitchCompat switchCompat = (SwitchCompat) item.getActionView().findViewById(R.id.Calendar1);
@@ -88,9 +88,9 @@ public class MainActivity extends AppCompatActivity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(isChecked)
-                    Toast.makeText(getApplicationContext(), "ВКЛ", LENGTH_SHORT).show();
+                    startActivity(intent);
                 else
-                    Toast.makeText(getApplicationContext(), "ВЫКЛ", LENGTH_SHORT).show();
+                    startActivity(intent);
             }
         });
 
@@ -125,8 +125,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(MainActivity.this, RegActivity.class);
-            startActivity(intent);
+            Intent intentSet = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intentSet);
         }
         if (id == R.id.action_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
@@ -181,9 +181,9 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new MonthFragment(), "Месяц");
-        adapter.addFragment(new WeekFragment(), "Неделя");
+        adapter.addFragment(new TodayFragmen(), "Сегодня");
+        adapter.addFragment(new WeekFragment(), "Расписание");
 
         viewPager.setAdapter(adapter);
     }
