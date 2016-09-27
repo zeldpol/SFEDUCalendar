@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setTitle("Расписание");
 
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -181,8 +182,9 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new TodayFragmen(), "Сегодня");
+
         adapter.addFragment(new MonthFragment(), "Месяц");
+        adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new WeekFragment(), "Неделя");
 
         viewPager.setAdapter(adapter);
