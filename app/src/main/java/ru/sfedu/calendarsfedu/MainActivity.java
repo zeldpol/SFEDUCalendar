@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        adapter.addFragment(new MonthFragment(), "Месяц");
+        adapter.addFragment(new MonthFragment(), "Календарь");
         adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new WeekFragment(), "Расписание");
 

@@ -1,0 +1,62 @@
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/cv"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lesson_begin"
+            android:textSize="20dp"
+            android:text="11.11"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lesson_end"
+            android:textSize="20dp"
+            android:text="12.12"
+            android:layout_below="@+id/lesson_begin"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lessson_teacher"
+            android:textSize="15dp"
+            android:text="Карахан"
+            android:layout_above="@+id/lesson_end"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lesson_audit"
+            android:text="Г-111"
+            android:layout_below="@+id/lesson_name"
+            android:layout_alignStart="@+id/lesson_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/lesson_name"
+            android:textSize="25dp"
+            android:text="Матан"
+            android:layout_marginStart="17dp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/lesson_begin" />
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
