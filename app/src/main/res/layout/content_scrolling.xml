@@ -9,6 +9,12 @@
     tools:showIn="@layout/activity_scrolling"
     android:background="@color/custom_background_disabled">
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rv"
+        />
+
 
 
 </android.support.v4.widget.NestedScrollView>
