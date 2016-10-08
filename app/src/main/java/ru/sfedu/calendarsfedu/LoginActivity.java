@@ -173,6 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (content.contains("success\":true")) {
                     MainActivity.atoken = reader.getString("token");
                     MainActivity.ShowDialog(LoginActivity.this,"Удачно, ваш токен господин: " + MainActivity.atoken,4000);
+                   MainActivity.SaveToken();
                     // Удачная авторизация
                 }
                 else

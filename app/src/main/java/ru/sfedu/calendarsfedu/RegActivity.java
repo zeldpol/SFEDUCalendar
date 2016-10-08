@@ -92,6 +92,8 @@ public class RegActivity extends AppCompatActivity {
             }
         });
 
+
+
         btn_registration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,6 +222,7 @@ public class RegActivity extends AppCompatActivity {
 
                     MainActivity.atoken = reader.getString("token");
                     MainActivity.ShowDialog(RegActivity.this, "Удачно, ваш токен господин: " + MainActivity.atoken,5000);
+                    MainActivity.SaveToken();
                     // Удачная рега
 
                 } else {

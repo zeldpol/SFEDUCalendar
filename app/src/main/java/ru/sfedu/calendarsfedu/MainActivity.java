@@ -1,6 +1,7 @@
 package ru.sfedu.calendarsfedu;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import android.support.design.widget.TabLayout;
@@ -18,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
 
     public static  String atoken="";
+    public static final String APP_TOKEN = "token";
     public static final  String HOST="http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH =6;
     public static final int USER_EMAIL_MIN_LENGTH =6;
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity
     public static final int USER_GROUP_MAX_LENGTH = 8;
     public static final int USER_FIRSTNAME_MIN_LENGTH = 2;
     public static final int USER_SECONDNAME_MIN_LENGTH = 2;
+    public static final String APP_PREFERENCES = "mysettings";
+    public static SharedPreferences mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Календарь ЮФУ");
 
+        mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -97,6 +103,44 @@ public class MainActivity extends AppCompatActivity
 
 
 
+    }
+
+
+    public static void SaveToken()
+    {
+        if(!atoken.isEmpty()) {
+            // Запоминаем данные
+            SharedPreferences.Editor editor = mSettings.edit();
+            Log.d("Save",atoken);
+            editor.putString(APP_TOKEN, atoken);
+            editor.apply();
+        }
+        else
+            Log.d("NotSave","123123123123123");
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mSettings.contains(APP_TOKEN))
+        {
+            atoken = mSettings.getString(APP_TOKEN,null);
+
+            if(atoken.isEmpty())
+            {
+
+                Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
+                startActivity(intentSet);
+            }
+        }
+        else
+        {
+
+          /*  Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
+            startActivity(intentSet);*/
+        }
     }
 
     @Override
