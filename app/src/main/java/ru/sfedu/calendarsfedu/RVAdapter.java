@@ -20,6 +20,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
         TextView lessonteacher;
         TextView lessonbegin;
         TextView lessonend;
+        TextView lessongroup;
 
         PersonViewHolder(View itemView) {
             super(itemView);
@@ -29,6 +30,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
             lessonteacher = (TextView)itemView.findViewById(R.id.lessson_teacher);
             lessonbegin = (TextView)itemView.findViewById(R.id.lesson_begin);
             lessonend = (TextView)itemView.findViewById(R.id.lesson_end);
+            lessongroup = (TextView)itemView.findViewById(R.id.group);
         }
     }
 
@@ -57,6 +59,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
         personViewHolder.lessonteacher.setText(lessons.get(i).teacher);
         personViewHolder.lessonbegin.setText(lessons.get(i).begin);
         personViewHolder.lessonend.setText(lessons.get(i).end);
+        personViewHolder.lessongroup.setText(lessons.get(i).group);
 
     }
 

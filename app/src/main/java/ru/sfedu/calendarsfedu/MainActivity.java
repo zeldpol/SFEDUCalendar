@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity
     String query;
     SearchView searchView;
     Menu mMenu;
+    public static String Data = "";
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String HOST = "http://46.101.100.248:8000/";

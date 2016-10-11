@@ -1,6 +1,5 @@
 package ru.sfedu.calendarsfedu;
 
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +13,12 @@ import java.util.List;
 
 import static ru.sfedu.calendarsfedu.MainActivity.Data;
 
+/**
+ * Created by ZeldPol on 12.10.2016.
+ */
 
-public class ScrollingActivity extends AppCompatActivity {
+public class DateLessons extends AppCompatActivity {
+
 
     private List<Lesson> lessons;
     private RecyclerView rv;

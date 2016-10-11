@@ -8,13 +8,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 
 import com.squareup.timessquare.CalendarPickerView;
 
-
+import static android.widget.Toast.LENGTH_SHORT;
+import static ru.sfedu.calendarsfedu.MainActivity.Data;
 
 
 public class MonthFragment extends Fragment{
@@ -60,8 +65,8 @@ public class MonthFragment extends Fragment{
         Calendar nextYear = Calendar.getInstance();
 
         //Add a year from Now
-        nextYear.add(Calendar.YEAR, 1);
-        YearNow.add(Calendar.YEAR, -1);
+        nextYear.add(Calendar.MONTH, 6);
+        YearNow.add(Calendar.MONTH, -3);
 
 
         final CalendarPickerView calendar = (CalendarPickerView) viewer.findViewById(R.id.calendar_view);
@@ -76,12 +81,12 @@ public class MonthFragment extends Fragment{
                 startActivity(intent);
 
 
-                /*DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
+                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
 
-                String dateNow = df.format(calendarPickerView.getSelectedDate().getTime());
+                String dateNow = df.format(calendar.getSelectedDate().getTime());
 
-                String toast = "Selected: " + dateNow;
-                Toast.makeText(getApplicationContext(), toast, LENGTH_SHORT).show();*/
+                Data = dateNow;
+                Toast.makeText(getActivity(), Data, LENGTH_SHORT).show();
 
 
                 return false;
