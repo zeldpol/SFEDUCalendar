@@ -4,7 +4,6 @@
     android:label="@string/searchable"
     android:searchSuggestAuthority="ru.sfedu.calendarsfedu.SearchableProvider"
     android:searchSuggestSelection=" ?"
-
     >
 
 

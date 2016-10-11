@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="red">#f00</color>
-    <color name="yellow">#FFFF00</color>
-    <color name="green">#FF00FF00</color>
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/custom_text_selected" />
+
+</selector>
