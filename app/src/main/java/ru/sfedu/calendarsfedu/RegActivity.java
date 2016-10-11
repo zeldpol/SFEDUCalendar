@@ -221,8 +221,9 @@ public class RegActivity extends AppCompatActivity {
                 if (content.contains("success\":true")) {
 
                     MainActivity.atoken = reader.getString("token");
-                    MainActivity.ShowDialog(RegActivity.this, "Удачно, ваш токен господин: " + MainActivity.atoken,5000);
                     MainActivity.SaveToken();
+                    Intent intentSet = new Intent(RegActivity.this, MainActivity.class);
+                    startActivity(intentSet);
                     // Удачная рега
 
                 } else {

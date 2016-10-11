@@ -172,8 +172,9 @@ public class LoginActivity extends AppCompatActivity {
                 JSONObject reader = new JSONObject(content);
                 if (content.contains("success\":true")) {
                     MainActivity.atoken = reader.getString("token");
-                    MainActivity.ShowDialog(LoginActivity.this,"Удачно, ваш токен господин: " + MainActivity.atoken,4000);
-                   MainActivity.SaveToken();
+                    MainActivity.SaveToken();
+                    Intent intentSet = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intentSet);
                     // Удачная авторизация
                 }
                 else

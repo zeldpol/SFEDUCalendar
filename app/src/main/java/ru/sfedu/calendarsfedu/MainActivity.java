@@ -3,6 +3,7 @@ package ru.sfedu.calendarsfedu;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.provider.SearchRecentSuggestions;
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.widget.CompoundButton;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity
     public static final int USER_SECONDNAME_MIN_LENGTH = 2;
     public static final String APP_PREFERENCES = "mysettings";
     public static SharedPreferences mSettings;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,12 +163,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+
     }
 
     @Override
@@ -205,6 +204,7 @@ public class MainActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(true);
+
         menu.findItem(R.id.menu_search).setVisible(false);  // Делаем кнопку поиска невидимой
         return super.onCreateOptionsMenu(menu);
     }
