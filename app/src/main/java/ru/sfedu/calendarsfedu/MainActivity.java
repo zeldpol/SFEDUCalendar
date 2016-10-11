@@ -1,15 +1,18 @@
 package ru.sfedu.calendarsfedu;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 
 
@@ -26,8 +29,6 @@ import android.content.Intent;
 import android.widget.CompoundButton;
 
 import android.widget.Toast;
-import static android.widget.Toast.LENGTH_SHORT;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,14 +42,14 @@ public class MainActivity extends AppCompatActivity
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
-
-
-    public static  String atoken="";
+    String query;
+    SearchView searchView;
+    Menu mMenu;
+    public static String atoken = "";
     public static final String APP_TOKEN = "token";
-    public static final  String HOST="http://46.101.100.248:8000/";
-    public static final int USER_PASSWORD_MIN_LENGTH =6;
-    public static final int USER_EMAIL_MIN_LENGTH =6;
+    public static final String HOST = "http://46.101.100.248:8000/";
+    public static final int USER_PASSWORD_MIN_LENGTH = 6;
+    public static final int USER_EMAIL_MIN_LENGTH = 6;
     public static final int USER_GROUP_MIN_LENGTH = 7;
     public static final int USER_GROUP_MAX_LENGTH = 8;
     public static final int USER_FIRSTNAME_MIN_LENGTH = 2;
@@ -74,9 +75,32 @@ public class MainActivity extends AppCompatActivity
 
         viewPager.setCurrentItem(1);
 
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() { // переключение табов
+            public void onPageScrollStateChanged(int state) {
+            }
+
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            public void onPageSelected(int position) {
+
+                if (position == 2) { // Если таб с расписанием делаем кнопку поиска видимой
+                    if (mMenu != null)
+
+                        mMenu.findItem(R.id.menu_search).setVisible(true);
+                } else {
+                    if (mMenu != null)
+                        mMenu.findItem(R.id.menu_search).setVisible(false);
+                }
+
+
+            }
+        });
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, 0, 0);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -93,7 +117,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked)
+                if (isChecked)
                     startActivity(intent);
                 else
                     startActivity(intent);
@@ -101,45 +125,35 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
-
     }
 
 
-    public static void SaveToken()
-    {
-        if(!atoken.isEmpty()) {
+    public static void SaveToken() {
+        if (!atoken.isEmpty()) {
             // Запоминаем данные
             SharedPreferences.Editor editor = mSettings.edit();
-            Log.d("Save",atoken);
+            Log.d("Save", atoken);
             editor.putString(APP_TOKEN, atoken);
             editor.apply();
         }
-        else
-            Log.d("NotSave","123123123123123");
-    }
 
+    }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mSettings.contains(APP_TOKEN))
-        {
-            atoken = mSettings.getString(APP_TOKEN,null);
+        if (mSettings.contains(APP_TOKEN)) {
+            atoken = mSettings.getString(APP_TOKEN, null);
 
-            if(atoken.isEmpty())
-            {
+            if (atoken.isEmpty()) {
 
                 Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
                 startActivity(intentSet);
             }
-        }
-        else
-        {
-
-          /*  Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
-            startActivity(intentSet);*/
+        } else {
+            Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
+            startActivity(intentSet);
         }
     }
 
@@ -154,10 +168,45 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        getQuery(intent);
+
+    }
+
+    private void getQuery(Intent intent) {  // При поиске вызывается
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+
+            String query = intent.getStringExtra(SearchManager.QUERY);
+
+            Toast.makeText(MainActivity.this, query, Toast.LENGTH_SHORT).show();
+
+            SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, SearchableProvider.AUTHORITY, SearchableProvider.MODE);
+            searchRecentSuggestions.saveRecentQuery(query, null);  // Сохраняем историю
+
+            searchView.setIconified(true); //
+            searchView.clearFocus();     // ЗАКРЫВАЕМ ПОИСК
+            if (mMenu != null) {
+                (mMenu.findItem(R.id.menu_search)).collapseActionView(); //
+            }
+
+        }
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        mMenu = menu;
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        menu.findItem(R.id.menu_search).setVisible(false);  // Делаем кнопку поиска невидимой
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -176,9 +225,8 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
         }
-        if(id == android.R.id.home)
+        if (id == android.R.id.home)
             this.finish();
-
 
 
         return super.onOptionsItemSelected(item);
@@ -187,17 +235,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-      /*  if (id == R.id.nav_camera) {
-            // Handle the camera action
-        }*/
-
-
-
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
 
@@ -224,11 +261,9 @@ public class MainActivity extends AppCompatActivity
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-
         adapter.addFragment(new MonthFragment(), "Календарь");
         adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new WeekFragment(), "Расписание");
-
         viewPager.setAdapter(adapter);
     }
 

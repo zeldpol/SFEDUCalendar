@@ -1,7 +1,16 @@
 package ru.sfedu.calendarsfedu;
 
-/**
- * Created by Leva on 11.10.2016.
- */
-public class SearchableProvider {
+import android.content.SearchRecentSuggestionsProvider;
+
+
+public class SearchableProvider extends SearchRecentSuggestionsProvider {
+
+    public static final String AUTHORITY = "ru.sfedu.calendarsfedu.SearchableProvider";
+    public static final int MODE = DATABASE_MODE_QUERIES;
+
+    public SearchableProvider() {
+        setupSuggestions(AUTHORITY, MODE);
+    }
+
+
 }
