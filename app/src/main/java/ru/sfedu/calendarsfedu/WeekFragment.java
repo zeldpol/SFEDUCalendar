@@ -36,7 +36,6 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private RecyclerView mRecyclerView ;
     TextView odd;
     SwipeRefreshLayout swipeLayout;
-    private GestureDetector mGesture;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +51,6 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 getResources().getColor(android.R.color.holo_blue_dark),
                 getResources().getColor(android.R.color.holo_orange_dark));
 
-        mGesture = new GestureDetector(getActivity(), mOnGesture);
 
         mRecyclerView  = (RecyclerView) view.findViewById(R.id.RecyclerView_week);
         LinearLayoutManager LinearLayoutManager = new LinearLayoutManager(getActivity());

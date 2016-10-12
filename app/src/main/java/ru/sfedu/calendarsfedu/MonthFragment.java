@@ -29,7 +29,6 @@ public class MonthFragment extends Fragment{
     public MonthFragment() {
         // Required empty public constructor
 
-
     }
 
     @Override
@@ -42,10 +41,6 @@ public class MonthFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
-
 
     }
 
@@ -80,14 +75,9 @@ public class MonthFragment extends Fragment{
                 Intent intent = new Intent(getActivity(), ScrollingActivity.class);
                 startActivity(intent);
 
+                DateFormat df = new SimpleDateFormat("d MMM yyyy");
 
-                DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy");
-
-                String dateNow = df.format(calendar.getSelectedDate().getTime());
-
-                Data = dateNow;
-                Toast.makeText(getActivity(), Data, LENGTH_SHORT).show();
-
+                Data = df.format(calendar.getSelectedDate().getTime());
 
                 return false;
             }
