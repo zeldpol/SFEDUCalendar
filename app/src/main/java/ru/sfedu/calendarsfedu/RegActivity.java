@@ -223,6 +223,7 @@ public class RegActivity extends AppCompatActivity {
                     MainActivity.atoken = reader.getString("token");
                     MainActivity.SaveToken();
                     Intent intentSet = new Intent(RegActivity.this, MainActivity.class);
+                    intentSet.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intentSet);
                     // Удачная рега
 
