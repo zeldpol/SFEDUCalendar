@@ -12,7 +12,10 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:background="@color/custom_background">
+
+
 
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -22,20 +25,6 @@
             android:layout_height="match_parent"
             android:background="@color/custom_background"
             tools:context="ru.sfedu.calendarsfedu.WeekFragment">
-            <TextView
-                android:id="@+id/odd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="10dp"
-                android:gravity="center_horizontal"
-                android:text="Четная неделя"
-                android:textColor="@color/colorAccent"
-                android:textSize="30dp"
-                android:textStyle="bold" />
-
-
 
 
             <android.support.v7.widget.RecyclerView
