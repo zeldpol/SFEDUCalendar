@@ -25,12 +25,9 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        lessons = new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
 
-
-    private List<Lesson> lessons;
     private RecyclerView mRecyclerView;
     SwipeRefreshLayout swipeLayout;
 
@@ -75,8 +72,6 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void newLeson(List<Lesson> newleson)
     {
-        Log.wtf("NEWLESONS","ADAPTER");
-        lessons=newleson;
         initializeAdapter();
         adapter.notifyDataSetChanged();
     }

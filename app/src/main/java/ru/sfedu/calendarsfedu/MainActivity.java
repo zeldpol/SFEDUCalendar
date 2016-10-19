@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mSqLiteDatabase;
     private ProgressDialog dialog;
     private Fragment weekFrag;
+    private int WeekNumberNow;
+
     ViewPagerAdapter adapter;
 
     String query;
@@ -144,7 +146,6 @@ public class MainActivity extends AppCompatActivity
 
         MenuItem item = navigationView.getMenu().findItem(R.id.Calendar1);
         SwitchCompat switchCompat = (SwitchCompat) item.getActionView().findViewById(R.id.Calendar1);
-
 
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -523,6 +524,8 @@ public class MainActivity extends AppCompatActivity
         fragment.newLeson(lessons);
     }
     public void SetToday() {
+
+
         TodayFragmen fragment = (TodayFragmen) adapter.mFragmentList.get(1);
         fragment.newLeson(Todaylessons);
     }
@@ -530,7 +533,10 @@ public class MainActivity extends AppCompatActivity
 
     List<Lesson> ParsJson(String json, int weekNumber) {
         List<Lesson> lessons;
+        List<Lesson> lessonsToday;
+
         lessons = new ArrayList<>();
+        lessonsToday= new ArrayList<>();
         String[] TimeA = new String[3];
 
         GregorianCalendar newCal = new GregorianCalendar( );
@@ -584,7 +590,7 @@ public class MainActivity extends AppCompatActivity
                         lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j+1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
 
                         if(DAYOFWEEK -2== i)
-                            Todaylessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j+1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+                            lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j+1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
 
                     } else {
                         event = "";
@@ -594,7 +600,8 @@ public class MainActivity extends AppCompatActivity
                             lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
 
                             if(DAYOFWEEK== i-2)
-                                Todaylessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+                                lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+
 
                         }
 
@@ -609,6 +616,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.ShowDialog(MainActivity.this, "Error JSON parsing: " + e.getMessage(), 5000);
         }
 
+        Todaylessons = lessonsToday;
         return lessons;
     }
 

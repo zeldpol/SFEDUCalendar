@@ -29,11 +29,8 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        lessons = new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
-
-    private List<Lesson> lessons;
     private RecyclerView mRecyclerView ;
     private  RVAdapter adapter;
     TextView odd;
@@ -102,18 +99,8 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         }, 3000);
     }
-
-
-    public void ClearAdapter()
-    {
-        lessons.clear();
-        adapter.notifyDataSetChanged();
-        adapter.notifyDataSetChanged();
-    }
-
     public void newLeson(List<Lesson> newleson)
     {
-        lessons=newleson;
         initializeAdapter();
         adapter.notifyDataSetChanged();
     }
