@@ -7,10 +7,13 @@
     tools:context="ru.sfedu.calendarsfedu.WeekFragment">
 
 
+
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/custom_background">
+
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,8 +22,6 @@
             android:layout_height="match_parent"
             android:background="@color/custom_background"
             tools:context="ru.sfedu.calendarsfedu.WeekFragment">
-
-
             <TextView
                 android:id="@+id/odd"
                 android:layout_width="match_parent"
@@ -34,23 +35,17 @@
                 android:textSize="30dp"
                 android:textStyle="bold" />
 
-            <android.support.v4.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="60dp"
-                android:background="@color/custom_background"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:context="ru.sfedu.calendarsfedu.ScrollingActivity"
-                tools:showIn="@layout/activity_scrolling">
 
-                <android.support.v7.widget.RecyclerView
+
+
+            <android.support.v7.widget.RecyclerView
                     android:id="@+id/RecyclerView_week"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
 
 
-            </android.support.v4.widget.NestedScrollView>
+                    />
+
 
         </RelativeLayout>
     </ScrollView>

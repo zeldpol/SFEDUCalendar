@@ -15,7 +15,7 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp">
+            android:padding="0dp">
 
 
             <TextView
@@ -24,10 +24,7 @@
                 android:id="@+id/lesson_begin"
                 android:textSize="15dp"
                 android:text="11.11"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
                 android:gravity="left"
-                android:layout_gravity="left"
                 android:textStyle="bold"
                 android:layout_weight="1" />
 
@@ -37,10 +34,10 @@
                 android:id="@+id/lesson_name"
                 android:textSize="18dp"
                 android:textStyle="bold"
+                android:gravity="center"
+                android:layout_gravity="center|top"
                 android:text="Матан"
                 android:layout_marginStart="17dp"
-                android:layout_above="@+id/lesson_audit"
-                android:layout_toEndOf="@+id/lesson_begin"
                 android:layout_weight="1" />
 
             <TextView
@@ -61,30 +58,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:padding="10dp">
+            android:padding="0dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/lesson_end"
+                android:textStyle="bold"
                 android:textSize="15dp"
                 android:text="12.12"
                 android:gravity="left"
-                android:layout_gravity="left"
-                android:layout_below="@+id/lesson_begin"
-                android:layout_alignParentStart="true"
                 android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/lesson_audit"
-                android:text="Г-111"
-                android:textSize="13dp"
-                android:layout_alignBaseline="@+id/lesson_end"
-                android:layout_alignBottom="@+id/lesson_end"
-                android:layout_alignStart="@+id/lesson_name"
-                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -94,8 +79,6 @@
                 android:layout_gravity="right"
                 android:textSize="12dp"
                 android:text="КТбо2-3"
-                android:layout_below="@+id/lessson_teacher"
-                android:layout_alignParentEnd="true"
                 android:layout_weight="1" />
         </LinearLayout>
 

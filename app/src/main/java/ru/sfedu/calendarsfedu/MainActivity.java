@@ -36,12 +36,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
+import android.view.ViewDebug;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,6 +58,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -67,7 +71,8 @@ public class MainActivity extends AppCompatActivity
     private DatabaseHelper mDatabaseHelper;
     private SQLiteDatabase mSqLiteDatabase;
     private ProgressDialog dialog;
-
+    private Fragment weekFrag;
+    ViewPagerAdapter adapter;
 
     String query;
     SearchView searchView;
@@ -75,6 +80,9 @@ public class MainActivity extends AppCompatActivity
     public static String Data = "";
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
+    public static final String APP_GROUPE = "grupe";
+    public String lasgroupe;
+
     public static final String HOST = "http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH = 6;
     public static final int USER_EMAIL_MIN_LENGTH = 6;
@@ -84,8 +92,7 @@ public class MainActivity extends AppCompatActivity
     public static final int USER_SECONDNAME_MIN_LENGTH = 2;
     public static final String APP_PREFERENCES = "mysettings";
     public static SharedPreferences mSettings;
-
-
+    public static List<Lesson> Mainlessons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Календарь ЮФУ");
 
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-
+        Mainlessons = new ArrayList<>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -149,8 +156,6 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                SaveToBd("КТБО2-3","{123123WQEQWEWQEWQEQEQEQWEWQE}");
-                SaveToBd("КТБО2-4","{wqewqewqewqe}");
 
 
               /*  if (isChecked)
@@ -164,32 +169,69 @@ public class MainActivity extends AppCompatActivity
 
         mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
-        mSqLiteDatabase.delete("raspis",null,null);
+        //   mSqLiteDatabase.delete("raspis", null, null);
 
     }
-    private void ShowProgress(boolean show,String message,Context cont)
-    {
-        if(dialog==null)
+
+    private void ShowProgress(boolean show, String message, Context cont) {
+        if (dialog == null)
             dialog = new ProgressDialog(cont);
 
         dialog.setMessage(message);
         dialog.setIndeterminate(true);
         dialog.setCancelable(false);
-        if(show)
+        if (show)
             dialog.show();
         else
             dialog.dismiss();
     }
 
-    public  void SaveToBd(String group ,String info)
-    {
+    public void SaveToBd(String group, String info) {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.GROPE_COLUMN, group);
         values.put(DatabaseHelper.INFO_COLUMN, info);
-      long DF=  mSqLiteDatabase.insert("raspis", null, values);
+        long DF = mSqLiteDatabase.insert("raspis", null, values);
 
-        Log.d("DBBBBBBBBBBBB","nomer " +DF);
+        Log.d("DBBBBBBBBBBBB", "nomer " + DF);
     }
+
+    public void UpdateBd(String group, String info) {
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.GROPE_COLUMN, group);
+        values.put(DatabaseHelper.INFO_COLUMN, info);
+
+        long DF = mSqLiteDatabase.update("raspis", values, "groupe = ?",
+                new String[]{group});
+        if (DF == 0)
+            SaveToBd(group, info);
+
+        Log.d("BDD", "Update " + DF);
+    }
+
+    public String FindInBd(String what) {
+        Cursor cursor = mSqLiteDatabase.query("raspis", new String[]{DatabaseHelper.GROPE_COLUMN,
+                        DatabaseHelper.INFO_COLUMN},
+                null, null,
+                null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+
+                String GROPE = cursor.getString(cursor.getColumnIndex(DatabaseHelper.GROPE_COLUMN));
+                String INFO = cursor.getString(cursor.getColumnIndex(DatabaseHelper.INFO_COLUMN));
+                if (GROPE.equals(what)) {
+                    return INFO;
+                }
+
+
+            } while (cursor.moveToNext());
+        }
+        // не забываем закрывать курсор
+        cursor.close();
+        return "";
+    }
+
     public static void SaveToken() {
         if (!atoken.isEmpty()) {
             // Запоминаем данные
@@ -201,6 +243,16 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    public static void SaveLastGroupe(String groupe) {
+        if (!groupe.isEmpty()) {
+            // Запоминаем данные
+            SharedPreferences.Editor editor = mSettings.edit();
+            Log.d("Save", groupe);
+            editor.putString(APP_GROUPE, groupe);
+            editor.apply();
+        }
+
+    }
 
     @Override
     protected void onResume() {
@@ -217,6 +269,13 @@ public class MainActivity extends AppCompatActivity
             Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
             startActivity(intentSet);
         }
+        if (mSettings.contains(APP_GROUPE)) {
+            lasgroupe = mSettings.getString(APP_GROUPE, null);
+            if (!lasgroupe.isEmpty()) {
+                Mainlessons = ParsJson(FindInBd(lasgroupe), 1);
+            }
+        }
+
     }
 
     @Override
@@ -235,11 +294,11 @@ public class MainActivity extends AppCompatActivity
         getQuery(intent);
 
     }
-    private void CloseSearch()
-    {
-        if (mMenu != null && searchView!= null) {
-        searchView.setIconified(true); //
-        searchView.clearFocus();     // ЗАКРЫВАЕМ ПОИСК
+
+    private void CloseSearch() {
+        if (mMenu != null && searchView != null) {
+            searchView.setIconified(true); //
+            searchView.clearFocus();     // ЗАКРЫВАЕМ ПОИСК
 
             (mMenu.findItem(R.id.menu_search)).collapseActionView(); //
         }
@@ -249,40 +308,13 @@ public class MainActivity extends AppCompatActivity
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
-            String query = intent.getStringExtra(SearchManager.QUERY);
+            query = intent.getStringExtra(SearchManager.QUERY);
 
             GetJson JsonGetter = new GetJson();
             JsonGetter.execute(query);
-
-
-
+            SaveLastGroupe(query);
             SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, SearchableProvider.AUTHORITY, SearchableProvider.MODE);
             searchRecentSuggestions.saveRecentQuery(query, null);  // Сохраняем историю
-
-
-
-
-
-            /*Cursor cursor = mSqLiteDatabase.query("raspis", new String[] {DatabaseHelper.GROPE_COLUMN,
-                            DatabaseHelper.INFO_COLUMN},
-                    null, null,
-                    null, null, null) ;
-
-           if(cursor.moveToFirst()) {
-               do {
-
-
-                   String catName = cursor.getString(cursor.getColumnIndex(DatabaseHelper.GROPE_COLUMN));
-                   String phoneNumber = cursor.getString(cursor.getColumnIndex(DatabaseHelper.INFO_COLUMN));
-                   Toast.makeText(MainActivity.this, catName + "  " + phoneNumber, Toast.LENGTH_SHORT).show();
-
-
-               }while(cursor.moveToNext());
-           }
-            // не забываем закрывать курсор
-            cursor.close();*/
-
-
             CloseSearch();
 
         }
@@ -364,7 +396,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+
         adapter.addFragment(new MonthFragment(), "Календарь");
         adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new WeekFragment(), "Расписание");
@@ -400,6 +434,162 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    private String GetLesonName(String text) {
+        if (text.length() < 2)
+            return "";
+        Pattern p;
+        String res = "";
+        Matcher m;
+        if (text.contains("Физ-ра")) {
+            p = Pattern.compile("[.]\\s([^)]+\\()");
+            m = p.matcher(text);
+            if (m.find())
+                res = m.group(1);
+
+            return res.replaceFirst("\\s\\(", "");
+        } else {
+            p = Pattern.compile("([А-Я][.][А-Я][.])\\s(([^)]+\\())");
+            m = p.matcher(text);
+            if (m.find())
+                res = m.group(2);
+
+            return res.replaceFirst("\\s\\(", "");
+
+        }
+
+
+    }
+
+    private String GetLesonType(String text) {
+        if (text.length() < 2)
+            return "";
+        String res2 = "";
+        Pattern p2 = Pattern.compile("\\(\\S+\\)");
+        Matcher m2 = p2.matcher(text);
+        if (m2.find())
+            res2 = m2.group();
+
+
+        return res2;
+
+    }
+    private String[] GetTime(String text) {
+
+        String[] Darray = new String[]{"","",""};
+
+
+        if (text.length() < 2)
+            return Darray;
+        Pattern p2 = Pattern.compile("(.*\\d\\:\\d+)\\-(\\d+\\:\\d+)");
+        Matcher m2 = p2.matcher(text);
+        if (m2.find()) {
+            Darray[0] = m2.group(1);
+            Darray[1] = m2.group(2);
+        }
+        return Darray;
+
+    }
+
+    private String GetTichers(String text) {
+
+        if (text.length() < 2)
+            return "";
+
+
+        if(text.contains("СПОРТЗАЛ"))
+            return "СПОРТЗАЛ";
+
+        String res = "";
+        Pattern p2 = Pattern.compile("(([А-Я]\\-[0-9]{1,4}))");
+        Matcher m2 = p2.matcher(text);
+
+        Pattern p = Pattern.compile("([А-Я][а-я]{1,20}\\s[А-Я]\\.[А-Я]\\.)");
+        Matcher m = p.matcher(text);
+        while (m.find() && m2.find())
+            res += m.group() + "\n" + m2.group() + "\n";
+
+        if (res.length() == 0)
+            return "";
+
+        return res.substring(0, res.length() - 1);
+
+    }
+
+    public void SetWeek(List<Lesson> lessons) {
+        WeekFragment fragment = (WeekFragment) adapter.mFragmentList.get(2);
+        fragment.newLeson(lessons);
+    }
+
+
+    List<Lesson> ParsJson(String json, int weekNumber) {
+        List<Lesson> lessons;
+        lessons = new ArrayList<>();
+        String[] TimeA = new String[3];
+
+        if (json.length() < 3)
+            return lessons;
+
+        try {
+            JSONObject reader = new JSONObject(json);
+            JSONObject payload = new JSONObject();
+            JSONObject schedule = new JSONObject();
+
+            String tday[] =
+                    {
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday"
+
+                    };
+            JSONObject week = new JSONObject();
+
+
+            String time;
+            String event;
+            int inedT = 0;
+            payload = reader.getJSONObject("payload");
+            schedule = payload.getJSONObject("schedule");
+
+            if (weekNumber == 1)
+                week = schedule.getJSONObject("first");
+            else
+                week = schedule.getJSONObject("second");
+            int parcount = 0;
+            for (int i = 0; i < 6; i++) {
+                // Log.wtf("JSON", week.getJSONObject(tday[i]).getString("day"));
+
+
+                lessons.add(new Lesson(week.getJSONObject(tday[i]).getString("day"), "", "", "", "", ""));
+                parcount = week.getJSONObject(tday[i]).getJSONArray("data").length();
+                for (int j = 0; j < parcount; j++) {
+
+
+                    if (week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).length() == 3) {
+                        event = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("event");
+                        time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
+                    } else {
+                        event = "";
+                        time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
+                    }
+
+
+                    TimeA = GetTime(time);
+                    lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), " ", GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+                }
+            }
+
+        } catch (JSONException e) {
+            MainActivity.ShowDialog(MainActivity.this, "Error JSON parsing: " + e.getMessage(), 5000);
+        }
+
+        return lessons;
+    }
+
+
     class GetJson extends AsyncTask<String, Void, String> {
 
         @Override
@@ -409,7 +599,7 @@ public class MainActivity extends AppCompatActivity
 
             try {
 
-                content = getContent(MainActivity.HOST + "api/group/"+ URLEncoder.encode(path[0],"utf-8"));
+                content = getContent(MainActivity.HOST + "api/group/" + URLEncoder.encode(path[0], "utf-8"));
             } catch (IOException ex) {
                 content = "Error: " + ex.getMessage();
 
@@ -422,49 +612,50 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(String content) {
 
 
-            if(!content.contains("\"success\":"))
-            {
-                MainActivity.ShowDialog(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение",5000);
+            if (!content.contains("\"success\":")) {
+                Mainlessons = ParsJson(FindInBd(query), 1);
+                SetWeek(Mainlessons);
+
+                MainActivity.ShowDialog(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", 5000);
                 return;
             }
 
 
             if (content.contains("Error")) {
 
-                MainActivity.ShowDialog(MainActivity.this, content,5000);
+                MainActivity.ShowDialog(MainActivity.this, content, 5000);
                 return;
             }
 
+            if (content.contains("success\":true")) {
 
-            try {
-                JSONObject reader = new JSONObject(content);
-
-                if (content.contains("success\":true")) {
-
-                    MainActivity.ShowDialog(MainActivity.this, content,5000);
-
-                    // Удачный поиск
-                } else {
-
-                    if (content.contains("Schedule is unavailible for this group")) {
-                        MainActivity.ShowDialog(MainActivity.this, "Группа не найдена!",5000);
-                        return;
-                    }
+                //  MainActivity.ShowDialog(MainActivity.this, content,5000);
 
 
-                    if (content.contains("Bad request")) {
-                        MainActivity.ShowDialog(MainActivity.this, "Проверьте правильность введенных данных. "+ content,5000);
-                        return;
-                    }
+                UpdateBd(query, content);
+                Mainlessons = ParsJson(FindInBd(query), 1);
+                SetWeek(Mainlessons);
 
-                    MainActivity.ShowDialog(MainActivity.this, content,4000);
 
+                // Удачный поиск
+            } else {
+
+                if (content.contains("Schedule is unavailible for this group")) {
+                    MainActivity.ShowDialog(MainActivity.this, "Группа не найдена!", 5000);
+                    return;
                 }
 
-            } catch (JSONException e) {
-                content = "Error: " + e.getMessage();
-                MainActivity.ShowDialog(MainActivity.this, content,5000);
+
+                if (content.contains("Bad request")) {
+                    MainActivity.ShowDialog(MainActivity.this, "Проверьте правильность введенных данных. " + content, 5000);
+                    return;
+                }
+
+                MainActivity.ShowDialog(MainActivity.this, content, 4000);
+
             }
+
+
         }
 
         private String getContent(String path) throws IOException {
@@ -491,13 +682,11 @@ public class MainActivity extends AppCompatActivity
                 } catch (IOException exception) {
                     try {
                         inputStream = c.getErrorStream();
-                    }
-                    catch(Exception e)
-                    {
+                    } catch (Exception e) {
                         return ("Error: Нет соединения с сервером");
                     }
                 }
-                if(inputStream!=null) {
+                if (inputStream != null) {
                     reader = new BufferedReader(new InputStreamReader(inputStream));
 
 
@@ -508,8 +697,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     return (buf.toString());
-                }
-                else
+                } else
                     return ("Error: Нет соединения с сервером");
 
             } finally {

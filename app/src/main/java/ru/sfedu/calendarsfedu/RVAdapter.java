@@ -1,11 +1,15 @@
 package ru.sfedu.calendarsfedu;
 
+import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -16,7 +20,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
 
         CardView cv;
         TextView lessonName;
-        TextView lessonauditorium;
         TextView lessonteacher;
         TextView lessonbegin;
         TextView lessonend;
@@ -26,7 +29,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             lessonName = (TextView)itemView.findViewById(R.id.lesson_name);
-            lessonauditorium = (TextView)itemView.findViewById(R.id.lesson_audit);
             lessonteacher = (TextView)itemView.findViewById(R.id.lessson_teacher);
             lessonbegin = (TextView)itemView.findViewById(R.id.lesson_begin);
             lessonend = (TextView)itemView.findViewById(R.id.lesson_end);
@@ -42,6 +44,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+
         super.onAttachedToRecyclerView(recyclerView);
     }
 
@@ -55,12 +58,19 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
     @Override
     public void onBindViewHolder(PersonViewHolder personViewHolder, int i) {
         personViewHolder.lessonName.setText(lessons.get(i).name);
-        personViewHolder.lessonauditorium.setText(lessons.get(i).auditorium);
         personViewHolder.lessonteacher.setText(lessons.get(i).teacher);
         personViewHolder.lessonbegin.setText(lessons.get(i).begin);
         personViewHolder.lessonend.setText(lessons.get(i).end);
         personViewHolder.lessongroup.setText(lessons.get(i).group);
+        personViewHolder.cv.setLayoutParams(new RelativeLayout.LayoutParams( CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.WRAP_CONTENT));
 
+        if(lessons.get(i).begin.equals("")) {
+            personViewHolder.lessonName.setGravity(Gravity.CENTER | Gravity.BOTTOM);
+            personViewHolder.lessonName.setTextColor(Color.BLUE);
+            personViewHolder.lessonName.setTextSize(25);
+            personViewHolder.cv.setLayoutParams(new RelativeLayout.LayoutParams( CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.WRAP_CONTENT));
+
+        }
     }
 
     @Override

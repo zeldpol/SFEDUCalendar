@@ -29,11 +29,13 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        lessons = new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
 
     private List<Lesson> lessons;
     private RecyclerView mRecyclerView ;
+    private  RVAdapter adapter;
     TextView odd;
     SwipeRefreshLayout swipeLayout;
 
@@ -56,8 +58,9 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         LinearLayoutManager LinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(LinearLayoutManager);
 
-        initializeData();
+        //initializeData();
         initializeAdapter();
+
 
 
         odd = (TextView) view.findViewById(R.id.odd);
@@ -113,36 +116,23 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         }, 3000);
     }
 
-    private void initializeData(){
-        lessons = new ArrayList<>();
-        lessons.add(new Lesson("Понедельник", "", "", "", "", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", ""));
-        lessons.add(new Lesson("Вторник", "", "", "", "", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", ""));
-        lessons.add(new Lesson("Среда", "", "", "", "", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", ""));
-        lessons.add(new Lesson("Четверг", "", "", "", "", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
-        lessons.add(new Lesson("Пятница", "", "", "", "", ""));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
-        lessons.add(new Lesson("Суббота", "", "", "", "", ""));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", ""));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", ""));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", ""));
 
+    public void ClearAdapter()
+    {
+        lessons.clear();
+        adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
+    }
+
+    public void newLeson(List<Lesson> newleson)
+    {
+        lessons=newleson;
+        initializeAdapter();
+        adapter.notifyDataSetChanged();
     }
 
     private void initializeAdapter(){
-        RVAdapter adapter = new RVAdapter(lessons);
+        adapter = new RVAdapter(MainActivity.Mainlessons);
         mRecyclerView.setAdapter(adapter);
     }
 
