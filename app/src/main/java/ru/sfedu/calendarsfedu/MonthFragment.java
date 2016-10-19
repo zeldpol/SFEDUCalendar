@@ -64,6 +64,8 @@ public class MonthFragment extends Fragment{
         YearNow.add(Calendar.MONTH, -3);
 
 
+
+
         final CalendarPickerView calendar = (CalendarPickerView) viewer.findViewById(R.id.calendar_view);
         calendar.init(YearNow.getTime(), nextYear.getTime()).withSelectedDate(today);
 

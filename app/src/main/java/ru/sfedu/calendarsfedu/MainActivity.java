@@ -55,6 +55,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -93,7 +95,8 @@ public class MainActivity extends AppCompatActivity
     public static final String APP_PREFERENCES = "mysettings";
     public static SharedPreferences mSettings;
     public static List<Lesson> Mainlessons;
-
+    public static List<Lesson> Todaylessons;
+    private boolean emtypair= false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity
 
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         Mainlessons = new ArrayList<>();
+        Todaylessons = new ArrayList<>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -121,16 +125,6 @@ public class MainActivity extends AppCompatActivity
 
             public void onPageSelected(int position) {
 
-                if (position == 2) { // Если таб с расписанием делаем кнопку поиска видимой
-                    if (mMenu != null)
-
-                        mMenu.findItem(R.id.menu_search).setVisible(true);
-                } else {
-                    if (mMenu != null) {
-                        CloseSearch();
-                        mMenu.findItem(R.id.menu_search).setVisible(false);
-                    }
-                }
 
 
             }
@@ -341,7 +335,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         searchView.setIconifiedByDefault(true);
-        menu.findItem(R.id.menu_search).setVisible(false);  // Делаем кнопку поиска невидимой
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -449,11 +443,16 @@ public class MainActivity extends AppCompatActivity
 
             return res.replaceFirst("\\s\\(", "");
         } else {
+
+
+
+
             p = Pattern.compile("([А-Я][.][А-Я][.])\\s(([^)]+\\())");
             m = p.matcher(text);
             if (m.find())
                 res = m.group(2);
-
+            if(res.equals(""))
+                return text;
             return res.replaceFirst("\\s\\(", "");
 
         }
@@ -469,7 +468,10 @@ public class MainActivity extends AppCompatActivity
         Matcher m2 = p2.matcher(text);
         if (m2.find())
             res2 = m2.group();
+        if(GetLesonName(text).contains(res2)) {
 
+            return "";
+        }
 
         return res2;
 
@@ -520,6 +522,10 @@ public class MainActivity extends AppCompatActivity
         WeekFragment fragment = (WeekFragment) adapter.mFragmentList.get(2);
         fragment.newLeson(lessons);
     }
+    public void SetToday() {
+        TodayFragmen fragment = (TodayFragmen) adapter.mFragmentList.get(1);
+        fragment.newLeson(Todaylessons);
+    }
 
 
     List<Lesson> ParsJson(String json, int weekNumber) {
@@ -527,6 +533,8 @@ public class MainActivity extends AppCompatActivity
         lessons = new ArrayList<>();
         String[] TimeA = new String[3];
 
+        GregorianCalendar newCal = new GregorianCalendar( );
+        int DAYOFWEEK = newCal.get( Calendar.DAY_OF_WEEK );
         if (json.length() < 3)
             return lessons;
 
@@ -568,17 +576,32 @@ public class MainActivity extends AppCompatActivity
                 for (int j = 0; j < parcount; j++) {
 
 
+
                     if (week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).length() == 3) {
                         event = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("event");
                         time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
+                        TimeA = GetTime(time);
+                        lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j+1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+
+                        if(DAYOFWEEK -2== i)
+                            Todaylessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j+1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+
                     } else {
                         event = "";
-                        time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
+                        if(emtypair) {
+                            time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
+                            TimeA = GetTime(time);
+                            lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+
+                            if(DAYOFWEEK== i-2)
+                                Todaylessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+
+                        }
+
                     }
 
 
-                    TimeA = GetTime(time);
-                    lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), " ", GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+
                 }
             }
 
@@ -615,7 +638,7 @@ public class MainActivity extends AppCompatActivity
             if (!content.contains("\"success\":")) {
                 Mainlessons = ParsJson(FindInBd(query), 1);
                 SetWeek(Mainlessons);
-
+                SetToday();
                 MainActivity.ShowDialog(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", 5000);
                 return;
             }
@@ -635,6 +658,7 @@ public class MainActivity extends AppCompatActivity
                 UpdateBd(query, content);
                 Mainlessons = ParsJson(FindInBd(query), 1);
                 SetWeek(Mainlessons);
+                SetToday();
 
 
                 // Удачный поиск

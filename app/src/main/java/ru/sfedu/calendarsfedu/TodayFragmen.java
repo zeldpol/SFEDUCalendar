@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-
+    RVAdapter adapter;
 
     public TodayFragmen() {
         // Required empty public constructor
@@ -24,6 +25,7 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        lessons = new ArrayList<>();
         super.onCreate(savedInstanceState);
     }
 
@@ -50,8 +52,6 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
         mRecyclerView  = (RecyclerView) view.findViewById(R.id.RecyclerView_today);
         LinearLayoutManager LinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(LinearLayoutManager);
-
-        initializeData();
         initializeAdapter();
 
         return view;
@@ -73,18 +73,15 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
         }, 3000);
     }
 
-    private void initializeData(){
-        lessons = new ArrayList<>();
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов\nК.Э. Каибханов\nК.Э. Каибханов\n", "11:15", "12:40", "КТбо2-3"));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", "КТбо6-3"));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", "РТбо1-3"));
-        lessons.add(new Lesson("Математика", "Г-301", "К.Э. Каибханов", "11:15", "12:40", "КТбо2-3"));
-        lessons.add(new Lesson("Информатика", "Д-128", "С.С. Парфенова", "08:00", "09:35", "КТбо2-3"));
-        lessons.add(new Lesson("ОАиП", "А-101", "А.С. Свиридов", "15:50", "17:25", "РТбо1-3"));
+    public void newLeson(List<Lesson> newleson)
+    {
+        Log.wtf("NEWLESONS","ADAPTER");
+        lessons=newleson;
+        initializeAdapter();
+        adapter.notifyDataSetChanged();
     }
-
     private void initializeAdapter(){
-        RVAdapter adapter = new RVAdapter(lessons);
+        adapter = new RVAdapter(MainActivity.Todaylessons);
         mRecyclerView.setAdapter(adapter);
     }
 

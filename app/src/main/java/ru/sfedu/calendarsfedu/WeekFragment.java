@@ -62,19 +62,6 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         initializeAdapter();
 
 
-
-        odd = (TextView) view.findViewById(R.id.odd);
-        odd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(odd.getText().equals("Четная неделя"))
-                    odd.setText("Нечетная неделя");
-                else
-                    odd.setText("Четная неделя");
-            }
-        });
-
         return view;
 
     }
