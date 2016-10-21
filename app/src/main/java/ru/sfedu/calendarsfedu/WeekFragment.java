@@ -20,8 +20,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.sfedu.calendarsfedu.MainActivity.adapterToday;
+import static ru.sfedu.calendarsfedu.MainActivity.adapterWeek;
+import static ru.sfedu.calendarsfedu.MainActivity.mRecyclerViewToday;
+import static ru.sfedu.calendarsfedu.MainActivity.mRecyclerViewWeek;
+
 
 public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+
+
 
     public WeekFragment() {
         // Required empty public constructor
@@ -31,17 +38,17 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    private RecyclerView mRecyclerView ;
-    private  RVAdapter adapter;
-    TextView odd;
+
+
     SwipeRefreshLayout swipeLayout;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View  view = inflater.inflate(R.layout.fragment_week, container, false);
-        // Inflate the layout for this fragment
+        View  view = inflater.inflate(R.layout.fragment_week, null);
+
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeLayout.setOnRefreshListener(this);
@@ -50,39 +57,14 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 getResources().getColor(android.R.color.holo_blue_dark),
                 getResources().getColor(android.R.color.holo_orange_dark));
 
-
-        mRecyclerView  = (RecyclerView) view.findViewById(R.id.RecyclerView_week);
+        mRecyclerViewWeek  = (RecyclerView) view.findViewById(R.id.RecyclerView_week);
         LinearLayoutManager LinearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(LinearLayoutManager);
-
-        //initializeData();
+        mRecyclerViewWeek.setLayoutManager(LinearLayoutManager);
         initializeAdapter();
-
 
         return view;
 
     }
-
-
-    private GestureDetector.OnGestureListener mOnGesture = new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.v("fling", "Flinged.");
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-    };
-
 
     public void onRefresh() {
         // говорим о том, что собираемся начать
@@ -102,14 +84,14 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void newLeson(List<Lesson> newleson)
     {
         initializeAdapter();
-        adapter.notifyDataSetChanged();
+        adapterWeek.notifyDataSetChanged();
     }
 
     private void initializeAdapter(){
-        adapter = new RVAdapter(MainActivity.Mainlessons);
-        mRecyclerView.setAdapter(adapter);
+        adapterWeek = new RVAdapter(MainActivity.Mainlessons);
+        if(mRecyclerViewWeek!=null)
+        mRecyclerViewWeek.setAdapter(adapterWeek);
     }
-
 }
 
 

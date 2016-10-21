@@ -14,10 +14,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.sfedu.calendarsfedu.MainActivity.adapterToday;
+import static ru.sfedu.calendarsfedu.MainActivity.mRecyclerViewToday;
+
 
 public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    RVAdapter adapter;
+
 
     public TodayFragmen() {
         // Required empty public constructor
@@ -28,7 +31,7 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
         super.onCreate(savedInstanceState);
     }
 
-    private RecyclerView mRecyclerView;
+
     SwipeRefreshLayout swipeLayout;
 
 
@@ -46,11 +49,10 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
                 getResources().getColor(android.R.color.holo_blue_dark),
                 getResources().getColor(android.R.color.holo_orange_dark));
 
-        mRecyclerView  = (RecyclerView) view.findViewById(R.id.RecyclerView_today);
+        mRecyclerViewToday  = (RecyclerView) view.findViewById(R.id.RecyclerView_today);
         LinearLayoutManager LinearLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(LinearLayoutManager);
+        mRecyclerViewToday.setLayoutManager(LinearLayoutManager);
         initializeAdapter();
-
         return view;
     }
 
@@ -73,11 +75,12 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
     public void newLeson(List<Lesson> newleson)
     {
         initializeAdapter();
-        adapter.notifyDataSetChanged();
+        adapterToday.notifyDataSetChanged();
     }
     private void initializeAdapter(){
-        adapter = new RVAdapter(MainActivity.Todaylessons);
-        mRecyclerView.setAdapter(adapter);
+        adapterToday = new RVAdapter(MainActivity.Todaylessons);
+        if(mRecyclerViewToday!=null)
+        mRecyclerViewToday.setAdapter(adapterToday);
     }
 
 }

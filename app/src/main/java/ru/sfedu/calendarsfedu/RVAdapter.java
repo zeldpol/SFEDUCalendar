@@ -70,12 +70,19 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
         personViewHolder.Number_par.setText(lessons.get(i).auditorium);
   //      personViewHolder.cv.setLayoutParams(new RelativeLayout.LayoutParams( CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.WRAP_CONTENT));
 
-        if(lessons.get(i).group.equals("")) {
+
+
+        if(lessons.get(i).begin!=null)
+        if(lessons.get(i).begin.equals("")) {
             personViewHolder.lessonName.setGravity(Gravity.CENTER );
             personViewHolder.lessonName.setTextColor(Color.rgb(255,145,5 ));
             personViewHolder.lessonName.setTextSize(24);
-            personViewHolder.lessonbegin.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 0.9f ));
+            personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 3.5f ));
+
+            personViewHolder.cv.setLayoutParams(new RecyclerView.LayoutParams( RecyclerView.LayoutParams.MATCH_PARENT, 140));
+
             personViewHolder.Number_par.setText("");
+
             personViewHolder.Linr.setVisibility(View.INVISIBLE);
         }
 
