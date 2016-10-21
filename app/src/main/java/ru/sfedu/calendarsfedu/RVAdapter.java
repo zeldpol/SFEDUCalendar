@@ -79,7 +79,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
             personViewHolder.lessonName.setTextSize(24);
             personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 3.5f ));
 
-            personViewHolder.cv.setLayoutParams(new RecyclerView.LayoutParams( RecyclerView.LayoutParams.MATCH_PARENT, 140));
+
 
             personViewHolder.Number_par.setText("");
 
