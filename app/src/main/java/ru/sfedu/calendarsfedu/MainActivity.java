@@ -91,6 +91,8 @@ public class MainActivity extends AppCompatActivity
     public static String lasgroupe;
     public static String query;
 
+    public static int flag;
+
     public static final String HOST = "http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH = 6;
     public static final int USER_EMAIL_MIN_LENGTH = 6;
@@ -117,7 +119,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Календарь ЮФУ");
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity
         WeekNumberNow = calender.get(Calendar.WEEK_OF_YEAR);
 
         mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        MainDate = new Date();
 
         Mainlessons = new ArrayList<>();
         Todaylessons = new ArrayList<>();
@@ -298,7 +301,15 @@ public class MainActivity extends AppCompatActivity
             Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
             startActivity(intentSet);
         }
+        if (!lasgroupe.isEmpty()) {
+            Log.wtf("UpdateG", "Neveru");
+            Log.wtf("UpdateG", lasgroupe);
 
+
+            GetJson JsonGetter = new GetJson();
+            JsonGetter.execute(lasgroupe);
+            return;
+        }
     }
 
     @Override
@@ -573,18 +584,18 @@ public class MainActivity extends AppCompatActivity
         TodayFragmen fragment = (TodayFragmen) adapter.mFragmentList.get(1);
         fragment.newLeson(Todaylessons);
     }
-    /*private void SetMonth() {
+    private void SetMonth() {
 
-
-        ScrollingActivity.newLeson(Todaylessons);
-    }*/
+        ScrollingActivity.newLesonMonth();
+    }
 
     List<Lesson> ParsJson(String json, int weekNumber) {
         List<Lesson> lessons;
         List<Lesson> lessonsToday;
-
+        List<Lesson> lessonsMonth;
         lessons = new ArrayList<>();
         lessonsToday = new ArrayList<>();
+        lessonsMonth = new ArrayList<>();
         String[] TimeA = new String[3];
 
         GregorianCalendar newCal = new GregorianCalendar();
@@ -627,6 +638,7 @@ public class MainActivity extends AppCompatActivity
                 lessonsToday.add(new Lesson("Отдыхай :)", "", "", "", "", ""));
             }
 
+
             for (int i = 0; i < 6; i++) {
                 // Log.wtf("JSON", week.getJSONObject(tday[i]).getString("day"));
 
@@ -646,6 +658,16 @@ public class MainActivity extends AppCompatActivity
                         time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
                         TimeA = GetTime(time);
                         lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+
+                        if(MainDate!=null) {
+
+                            Log.e("dateonmain",Integer.toString(MainDate.getDay()));
+
+                            Log.e("GGGGGG","WP");
+                            if (i+1 == MainDate.getDay())
+                                lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+
+                        }
 
                         if (DAYOFWEEK - 2 == i)
                             lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
@@ -675,6 +697,7 @@ public class MainActivity extends AppCompatActivity
 
         Todaylessons = lessonsToday;
         Mainlessons = lessons;
+        Monthlessons =lessonsMonth;
 
         return lessons;
     }
@@ -711,6 +734,7 @@ public class MainActivity extends AppCompatActivity
                 Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow));
                 SetWeek();
                 SetToday();
+                SetMonth();
                 Log.wtf("EEwqeqwe","Hff");
                 Toast.makeText(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", Toast.LENGTH_SHORT).show();
                 return;
@@ -744,7 +768,7 @@ public class MainActivity extends AppCompatActivity
                 Mainlessons = ParsJson(content, isEven(WeekNumberNow));
                 SetWeek();
                 SetToday();
-
+                SetMonth();
 
                 // Удачный поиск
             } else {

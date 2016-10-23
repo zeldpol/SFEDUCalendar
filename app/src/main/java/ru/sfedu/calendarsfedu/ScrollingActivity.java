@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import static ru.sfedu.calendarsfedu.MainActivity.MainDate;
 import static ru.sfedu.calendarsfedu.MainActivity.Monthlessons;
 import static ru.sfedu.calendarsfedu.MainActivity.adapterMonth;
 import static ru.sfedu.calendarsfedu.MainActivity.adapterToday;
+import static ru.sfedu.calendarsfedu.MainActivity.flag;
 import static ru.sfedu.calendarsfedu.MainActivity.rv;
 
 
@@ -43,8 +45,20 @@ public class ScrollingActivity extends AppCompatActivity {
         rv = (RecyclerView)findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rv.setLayoutManager(llm);
+        initializeAdapterMonth();
 
-        initializeAdapter();
+
+
+        if (flag == 0) {
+            finish();
+            Log.e("Try","123131");
+            Intent intentSet = new Intent(ScrollingActivity.this, MainActivity.class);
+            startActivity(intentSet);
+            startActivity(intent);
+            flag++;
+        }
+        Log.e("Flag",Integer.toString(flag));
+
     }
 
     @Override
@@ -59,14 +73,15 @@ public class ScrollingActivity extends AppCompatActivity {
         }
     }
 
-    public void newLeson(List<Lesson> newleson)
+    public static void newLesonMonth()
     {
-        initializeAdapter();
+        initializeAdapterMonth();
         adapterMonth.notifyDataSetChanged();
     }
 
-    private void initializeAdapter(){
+    public static void initializeAdapterMonth(){
         adapterMonth = new RVAdapter(Monthlessons);
+        if(rv!=null)
         rv.setAdapter(adapterMonth);
     }
 }
