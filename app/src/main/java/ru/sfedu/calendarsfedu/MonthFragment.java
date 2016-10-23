@@ -19,7 +19,7 @@ import java.util.Date;
 import com.squareup.timessquare.CalendarPickerView;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static ru.sfedu.calendarsfedu.MainActivity.Data;
+import static ru.sfedu.calendarsfedu.MainActivity.MainDate;
 
 
 public class MonthFragment extends Fragment{
@@ -69,19 +69,22 @@ public class MonthFragment extends Fragment{
         final CalendarPickerView calendar = (CalendarPickerView) viewer.findViewById(R.id.calendar_view);
         calendar.init(YearNow.getTime(), nextYear.getTime()).withSelectedDate(today);
 
-        calendar.setCellClickInterceptor(new CalendarPickerView.CellClickInterceptor() {
+        calendar.setOnDateSelectedListener(new CalendarPickerView.OnDateSelectedListener() {
+
             @Override
-            public boolean onCellClicked(Date date) {
+            public void onDateUnselected(Date date) {
 
+            }
 
-                Intent intent = new Intent(getActivity(), ScrollingActivity.class);
-                startActivity(intent);
-
+            @Override
+            public void onDateSelected(Date date) {
+                MainDate = date;
                 DateFormat df = new SimpleDateFormat("d MMM yyyy");
+                String  data = df.format(calendar.getSelectedDate().getTime());
+                Intent intent = new Intent(getActivity(), ScrollingActivity.class);
+                intent.putExtra("data", data);
 
-                Data = df.format(calendar.getSelectedDate().getTime());
-
-                return false;
+                startActivity(intent);
             }
         });
 

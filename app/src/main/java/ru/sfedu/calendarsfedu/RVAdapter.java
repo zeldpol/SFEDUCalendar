@@ -68,22 +68,17 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
         personViewHolder.lessonend.setText(lessons.get(i).end);
         personViewHolder.lessongroup.setText(lessons.get(i).group);
         personViewHolder.Number_par.setText(lessons.get(i).auditorium);
-  //      personViewHolder.cv.setLayoutParams(new RelativeLayout.LayoutParams( CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.WRAP_CONTENT));
-
 
 
         if(lessons.get(i).begin!=null)
         {
         if(lessons.get(i).begin.equals("")) {
-            personViewHolder.lessonbegin.setText("");
-
-            Log.wtf("WWWWWWW",personViewHolder.lessonName.getText().toString());
 
             personViewHolder.lessonName.setGravity(Gravity.CENTER );
-            personViewHolder.lessonName.setTextColor(Color.rgb(255,145,5 ));
+            personViewHolder.lessonName.setTextColor(Color.rgb(255,145,5));
+            personViewHolder.cv.setBackgroundColor(Color.rgb(240, 248, 219));
             personViewHolder.lessonName.setTextSize(24);
-            personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 3.5f ));
-            personViewHolder.Number_par.setText("");
+            personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams(0, CardView.LayoutParams.WRAP_CONTENT, 3.5f ));
             personViewHolder.Linr.setVisibility(View.INVISIBLE);
         }
             else
@@ -91,6 +86,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
             personViewHolder.Linr.setVisibility(View.VISIBLE);
             personViewHolder.lessonName.setGravity(Gravity.NO_GRAVITY);
             personViewHolder.lessonName.setTextColor(Color.parseColor("#8a000000"));
+            personViewHolder.cv.setBackgroundColor(Color.WHITE);
             personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 2.0f ));
             personViewHolder.lessonName.setTextSize(18);
             personViewHolder.Number_par.setText(lessons.get(i).auditorium);

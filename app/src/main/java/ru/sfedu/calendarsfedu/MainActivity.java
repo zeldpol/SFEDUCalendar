@@ -58,6 +58,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Timer;
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 
     SearchView searchView;
     Menu mMenu;
-    public static String Data = "";
+    public static Date MainDate ;
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String APP_GROUPE = "grupe";
@@ -101,10 +102,16 @@ public class MainActivity extends AppCompatActivity
     public static SharedPreferences mSettings;
     public static List<Lesson> Mainlessons;
     public static List<Lesson> Todaylessons;
+    public static List<Lesson> Monthlessons;
     public static RVAdapter adapterWeek;
     public static RVAdapter adapterToday;
+    public static RVAdapter adapterMonth;
     public static RecyclerView mRecyclerViewWeek ;
     public static RecyclerView mRecyclerViewToday;
+    public static RecyclerView rv;
+
+
+
     private boolean emtypair = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +130,7 @@ public class MainActivity extends AppCompatActivity
 
         Mainlessons = new ArrayList<>();
         Todaylessons = new ArrayList<>();
+        Monthlessons = new ArrayList<>();
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -565,7 +573,11 @@ public class MainActivity extends AppCompatActivity
         TodayFragmen fragment = (TodayFragmen) adapter.mFragmentList.get(1);
         fragment.newLeson(Todaylessons);
     }
+    /*private void SetMonth() {
 
+
+        ScrollingActivity.newLeson(Todaylessons);
+    }*/
 
     List<Lesson> ParsJson(String json, int weekNumber) {
         List<Lesson> lessons;
@@ -609,6 +621,12 @@ public class MainActivity extends AppCompatActivity
                 week = schedule.getJSONObject("second");
 
             int parcount = 0;
+
+            if(DAYOFWEEK==1)
+            {
+                lessonsToday.add(new Lesson("Отдыхай :)", "", "", "", "", ""));
+            }
+
             for (int i = 0; i < 6; i++) {
                 // Log.wtf("JSON", week.getJSONObject(tday[i]).getString("day"));
 
@@ -616,6 +634,9 @@ public class MainActivity extends AppCompatActivity
                 lessons.add(new Lesson(week.getJSONObject(tday[i]).getString("day"), "", "", "", "", ""));
 
                 parcount = week.getJSONObject(tday[i]).getJSONArray("data").length();
+
+
+
 
                 for (int j = 0; j < parcount; j++) {
 

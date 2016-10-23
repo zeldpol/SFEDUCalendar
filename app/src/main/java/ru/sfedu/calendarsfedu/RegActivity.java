@@ -26,6 +26,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import static ru.sfedu.calendarsfedu.MainActivity.SaveLastGroupe;
+import static ru.sfedu.calendarsfedu.MainActivity.lasgroupe;
+
 
 public class RegActivity extends AppCompatActivity {
 
@@ -224,6 +227,10 @@ public class RegActivity extends AppCompatActivity {
                     MainActivity.SaveToken();
                     Intent intentSet = new Intent(RegActivity.this, MainActivity.class);
                     intentSet.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                    lasgroupe = group;
+                    if(lasgroupe!=null)
+                    SaveLastGroupe(lasgroupe);
                     startActivity(intentSet);
                     // Удачная рега
 
