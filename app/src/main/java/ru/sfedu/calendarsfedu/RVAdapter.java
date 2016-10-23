@@ -73,19 +73,31 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PersonViewHolder> 
 
 
         if(lessons.get(i).begin!=null)
+        {
         if(lessons.get(i).begin.equals("")) {
+            personViewHolder.lessonbegin.setText("");
+
+            Log.wtf("WWWWWWW",personViewHolder.lessonName.getText().toString());
+
             personViewHolder.lessonName.setGravity(Gravity.CENTER );
             personViewHolder.lessonName.setTextColor(Color.rgb(255,145,5 ));
             personViewHolder.lessonName.setTextSize(24);
             personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 3.5f ));
-
-
-
             personViewHolder.Number_par.setText("");
-
             personViewHolder.Linr.setVisibility(View.INVISIBLE);
         }
+            else
+        {
+            personViewHolder.Linr.setVisibility(View.VISIBLE);
+            personViewHolder.lessonName.setGravity(Gravity.NO_GRAVITY);
+            personViewHolder.lessonName.setTextColor(Color.parseColor("#8a000000"));
+            personViewHolder.lessonName.setLayoutParams(new LinearLayout.LayoutParams( 0, CardView.LayoutParams.WRAP_CONTENT, 2.0f ));
+            personViewHolder.lessonName.setTextSize(18);
+            personViewHolder.Number_par.setText(lessons.get(i).auditorium);
 
+
+        }
+      }
     }
 
     @Override

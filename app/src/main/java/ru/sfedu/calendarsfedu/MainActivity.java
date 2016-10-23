@@ -80,14 +80,15 @@ public class MainActivity extends AppCompatActivity
 
     ViewPagerAdapter adapter;
 
-    String query;
+
     SearchView searchView;
     Menu mMenu;
     public static String Data = "";
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String APP_GROUPE = "grupe";
-    public String lasgroupe;
+    public static String lasgroupe;
+    public static String query;
 
     public static final String HOST = "http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH = 6;
@@ -104,9 +105,7 @@ public class MainActivity extends AppCompatActivity
     public static RVAdapter adapterToday;
     public static RecyclerView mRecyclerViewWeek ;
     public static RecyclerView mRecyclerViewToday;
-
     private boolean emtypair = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +123,6 @@ public class MainActivity extends AppCompatActivity
 
         Mainlessons = new ArrayList<>();
         Todaylessons = new ArrayList<>();
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -179,7 +177,6 @@ public class MainActivity extends AppCompatActivity
         mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
         //   mSqLiteDatabase.delete("raspis", null, null);
-
     }
 
     private void ShowProgress(boolean show, String message, Context cont) {
@@ -214,6 +211,8 @@ public class MainActivity extends AppCompatActivity
 
 
     public void UpdateBd(String group, String info) {
+        if(group== null || info == null)
+                return;
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.GROPE_COLUMN, group);
         values.put(DatabaseHelper.INFO_COLUMN, info);
@@ -227,10 +226,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String FindInBd(String what) {
+        if(what==null)
+            return "";
         Cursor cursor = mSqLiteDatabase.query("raspis", new String[]{DatabaseHelper.GROPE_COLUMN,
                         DatabaseHelper.INFO_COLUMN},
                 null, null,
                 null, null, null);
+                Log.wtf("Загрузка","Бд грузит");
 
         if (cursor.moveToFirst()) {
             do {
@@ -288,18 +290,26 @@ public class MainActivity extends AppCompatActivity
             Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
             startActivity(intentSet);
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (mSettings.contains(APP_GROUPE)) {
             lasgroupe = mSettings.getString(APP_GROUPE, null);
             if (!lasgroupe.isEmpty()) {
-                Mainlessons = ParsJson(FindInBd(lasgroupe), isEven(WeekNumberNow));
+                Log.wtf("UpdateG", "Neveru");
+                Log.wtf("UpdateG", lasgroupe);
+
+
+                GetJson JsonGetter = new GetJson();
+                JsonGetter.execute(lasgroupe);
+                return;
             }
         }
-        if(lasgroupe!=null) {
-            GetJson JsonGetter = new GetJson();
-            JsonGetter.execute(lasgroupe);
-        }
-
     }
+
 
     @Override
     public void onBackPressed() {
@@ -649,7 +659,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    class GetJson extends AsyncTask<String, Void, String> {
+   public  class GetJson extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... path) {
@@ -694,15 +704,20 @@ public class MainActivity extends AppCompatActivity
 
             if (content.contains("success\":true")) {
 
-
-                SaveLastGroupe(query);
-                if(query!=null)
-                lasgroupe=query;
                 SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(MainActivity.this, SearchableProvider.AUTHORITY, SearchableProvider.MODE);
                 searchRecentSuggestions.saveRecentQuery(query, null);  // Сохраняем историю
 
                 //  MainActivity.ShowDialog(MainActivity.this, content,5000);
 
+                if(query!=null) {
+                    SaveLastGroupe(query);
+                    lasgroupe=query;
+                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: "+query, Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: "+lasgroupe, Toast.LENGTH_SHORT).show();
+                }
 
                 UpdateBd(query, content);
                 Mainlessons = ParsJson(content, isEven(WeekNumberNow));

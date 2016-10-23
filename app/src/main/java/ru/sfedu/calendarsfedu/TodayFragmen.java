@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import static ru.sfedu.calendarsfedu.MainActivity.adapterToday;
 import static ru.sfedu.calendarsfedu.MainActivity.mRecyclerViewToday;
 
@@ -58,18 +59,20 @@ public class TodayFragmen extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void onRefresh() {
         // говорим о том, что собираемся начать
-        Toast.makeText(getActivity(), R.string.refresh_started, Toast.LENGTH_SHORT).show();
-        // начинаем показывать прогресс
-        swipeLayout.setRefreshing(true);
-        // ждем 3 секунды и прячем прогресс
-        swipeLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                swipeLayout.setRefreshing(false);
-                // говорим о том, что собираемся закончить
-                Toast.makeText(getActivity(), R.string.refresh_finished, Toast.LENGTH_SHORT).show();
-            }
-        }, 3000);
+
+          Toast.makeText(getActivity(), R.string.refresh_started, Toast.LENGTH_SHORT).show();
+           // начинаем показывать прогресс
+           swipeLayout.setRefreshing(true);
+           // ждем 3 секунды и прячем прогресс
+           swipeLayout.postDelayed(new Runnable() {
+               @Override
+               public void run() {
+                   swipeLayout.setRefreshing(false);
+                   // говорим о том, что собираемся закончить
+                   Toast.makeText(getActivity(), R.string.refresh_finished, Toast.LENGTH_SHORT).show();
+               }
+           }, 2000);
+
     }
 
     public void newLeson(List<Lesson> newleson)
