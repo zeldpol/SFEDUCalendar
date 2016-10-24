@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
 
     SearchView searchView;
     Menu mMenu;
-    public static Date MainDate ;
+    public static Date MainDate;
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String APP_GROUPE = "grupe";
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity
     public static RVAdapter adapterWeek;
     public static RVAdapter adapterToday;
     public static RVAdapter adapterMonth;
-    public static RecyclerView mRecyclerViewWeek ;
+    public static RecyclerView mRecyclerViewWeek;
     public static RecyclerView mRecyclerViewToday;
     public static RecyclerView rv;
 
@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity
     final int _MONTH = 3;
 
     private boolean emtypair = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,7 +181,6 @@ public class MainActivity extends AppCompatActivity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
 
-
                 if (isChecked)
                     WeekNumberNow = 1;
                 else
@@ -193,9 +193,6 @@ public class MainActivity extends AppCompatActivity
         mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
         //   mSqLiteDatabase.delete("raspis", null, null);
-
-
-
 
 
     }
@@ -213,15 +210,6 @@ public class MainActivity extends AppCompatActivity
             dialog.dismiss();
     }
 
-    public void SaveToBd(String group, String info) {
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.GROPE_COLUMN, group);
-        values.put(DatabaseHelper.INFO_COLUMN, info);
-        long DF = mSqLiteDatabase.insert("raspis", null, values);
-
-        Log.d("DBBBBBBBBBBBB", "nomer " + DF);
-    }
-
     private int isEven(int n) {
         if (n % 2 == 0) {
             return 1;
@@ -230,10 +218,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void SaveToBd(String group, String info) {
+
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.GROPE_COLUMN, group);
+        values.put(DatabaseHelper.INFO_COLUMN, info);
+        long DF = mSqLiteDatabase.insert("raspis", null, values);
+
+    }
+
 
     public void UpdateBd(String group, String info) {
-        if(group== null || info == null)
-                return;
+        if (group == null || info == null)
+            return;
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.GROPE_COLUMN, group);
         values.put(DatabaseHelper.INFO_COLUMN, info);
@@ -243,17 +240,16 @@ public class MainActivity extends AppCompatActivity
         if (DF == 0)
             SaveToBd(group, info);
 
-        Log.d("BDD", "Update " + DF);
     }
 
     public String FindInBd(String what) {
-        if(what==null)
+        if (what == null)
             return "";
         Cursor cursor = mSqLiteDatabase.query("raspis", new String[]{DatabaseHelper.GROPE_COLUMN,
                         DatabaseHelper.INFO_COLUMN},
                 null, null,
                 null, null, null);
-                Log.wtf("Загрузка","Бд грузит");
+        Log.wtf("Загрузка", "Бд грузит");
 
         if (cursor.moveToFirst()) {
             do {
@@ -285,14 +281,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static void SaveLastGroupe(String groupe) {
-        if(groupe!=null)
-        if (!groupe.isEmpty()) {
-            // Запоминаем данные
-            SharedPreferences.Editor editor = mSettings.edit();
-            Log.d("Save", groupe);
-            editor.putString(APP_GROUPE, groupe);
-            editor.apply();
-        }
+        if (groupe != null)
+            if (!groupe.isEmpty()) {
+                // Запоминаем данные
+                SharedPreferences.Editor editor = mSettings.edit();
+                Log.d("Save", groupe);
+                editor.putString(APP_GROUPE, groupe);
+                editor.apply();
+            }
 
     }
 
@@ -326,7 +322,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-
     }
 
 
@@ -345,25 +340,23 @@ public class MainActivity extends AppCompatActivity
 
 
         super.onNewIntent(intent);
-        if(intent.getStringExtra("start")!=null)
-       if(intent.getStringExtra("start").toString().equals("click"))
-       {
+        if (intent.getStringExtra("start") != null)
+            if (intent.getStringExtra("start").toString().equals("click")) {
 
-           if(query!=null)
-               lasgroupe=query;
-           else
-           if(lasgroupe!=null)
-               query=lasgroupe;
-           Calendar calender = new GregorianCalendar();;
-           calender.setTime(MainDate);
+                if (query != null)
+                    lasgroupe = query;
+                else if (lasgroupe != null)
+                    query = lasgroupe;
+                Calendar calender = new GregorianCalendar();
+                calender.setTime(MainDate);
 
-           int WeekNumber = calender.get(Calendar.WEEK_OF_YEAR);
-           ParsJson(FindInBd(query), isEven(WeekNumber),_MONTH);
+                int WeekNumber = calender.get(Calendar.WEEK_OF_YEAR);
+                ParsJson(FindInBd(query), isEven(WeekNumber), _MONTH);
 
-           Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
-           intent2.putExtra("data", intent.getStringExtra("data").toString());
-           startActivity(intent2);
-       }
+                Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
+                intent2.putExtra("data", intent.getStringExtra("data").toString());
+                startActivity(intent2);
+            }
 
         setIntent(intent);
         getQuery(intent);
@@ -391,7 +384,6 @@ public class MainActivity extends AppCompatActivity
             CloseSearch();
 
         }
-
 
 
     }
@@ -609,6 +601,7 @@ public class MainActivity extends AppCompatActivity
         TodayFragmen fragment = (TodayFragmen) adapter.mFragmentList.get(1);
         fragment.newLeson(Todaylessons);
     }
+
     private void SetMonth() {
 
         ScrollingActivity.newLesonMonth();
@@ -659,8 +652,7 @@ public class MainActivity extends AppCompatActivity
             Log.wtf("JSON", Integer.toString(DAYOFWEEK));
             Log.wtf("JSON", Integer.toString(weekNumber));
 
-            if(DAYOFWEEK==1)
-            {
+            if (DAYOFWEEK == 1) {
                 lessonsToday.add(new Lesson("Отдыхай :)", "", "", "", "", ""));
             }
 
@@ -668,12 +660,10 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < 6; i++) {
 
 
-                if(forwhat==_WEEK)
-                lessons.add(new Lesson(week.getJSONObject(tday[i]).getString("day"), "", "", "", "", ""));
+                if (forwhat == _WEEK)
+                    lessons.add(new Lesson(week.getJSONObject(tday[i]).getString("day"), "", "", "", "", ""));
 
                 parcount = week.getJSONObject(tday[i]).getJSONArray("data").length();
-
-
 
 
                 for (int j = 0; j < parcount; j++) {
@@ -684,29 +674,29 @@ public class MainActivity extends AppCompatActivity
                         time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
                         TimeA = GetTime(time);
 
-                        if(forwhat==_WEEK)
-                        lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+                        if (forwhat == _WEEK)
+                            lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1] , "", lasgroupe));
 
-                        if(MainDate!=null) {
+                        if (MainDate != null) {
 
-                            if (i+1 == MainDate.getDay() &&  forwhat== _MONTH)
-                                lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+                            if (i + 1 == MainDate.getDay() && forwhat == _MONTH)
+                                lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1], "", lasgroupe));
 
                         }
 
-                        if (DAYOFWEEK - 2 == i && forwhat==_WEEK && weekNumber ==isEven(DAYOFWEEK))
-                            lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
+                        if (DAYOFWEEK - 2 == i && forwhat == _WEEK && weekNumber == isEven(DAYOFWEEK))
+                            lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1] , "", lasgroupe));
 
                     } else {
                         event = "";
                         if (emtypair) {
                             time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
                             TimeA = GetTime(time);
-                            if(forwhat==_WEEK)
-                            lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+                            if (forwhat == _WEEK)
+                                lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
-                            if (DAYOFWEEK == i - 2 && forwhat==_WEEK && weekNumber ==isEven(DAYOFWEEK))
-                                lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
+                            if (DAYOFWEEK == i - 2 && forwhat == _WEEK && weekNumber == isEven(DAYOFWEEK))
+                                lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
 
                         }
@@ -720,19 +710,19 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             MainActivity.ShowDialog(MainActivity.this, "Error JSON parsing: " + e.getMessage(), 5000);
         }
-        if(forwhat==_WEEK) {
-            if(weekNumber ==isEven(DAYOFWEEK))
-            Todaylessons = lessonsToday;
+        if (forwhat == _WEEK) {
+            if (weekNumber == isEven(DAYOFWEEK))
+                Todaylessons = lessonsToday;
             Mainlessons = lessons;
         }
-        if(forwhat== _MONTH)
-        Monthlessons = lessonsMonth;
+        if (forwhat == _MONTH)
+            Monthlessons = lessonsMonth;
 
         return lessons;
     }
 
 
-   public  class GetJson extends AsyncTask<String, Void, String> {
+    public class GetJson extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... path) {
@@ -756,15 +746,15 @@ public class MainActivity extends AppCompatActivity
 
             if (!content.contains("\"success\":")) {
 
-                if(query!=null)
-                    lasgroupe=query;
-                if(lasgroupe!=null)
-                    query=lasgroupe;
-                Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow),_WEEK);
+                if (query != null)
+                    lasgroupe = query;
+                if (lasgroupe != null)
+                    query = lasgroupe;
+                Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow), _WEEK);
                 SetWeek();
                 SetToday();
                 SetMonth();
-                Log.wtf("EEwqeqwe","Hff");
+                Log.wtf("EEwqeqwe", "Hff");
                 Toast.makeText(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -783,18 +773,16 @@ public class MainActivity extends AppCompatActivity
 
                 //  MainActivity.ShowDialog(MainActivity.this, content,5000);
 
-                if(query!=null) {
+                if (query != null) {
                     SaveLastGroupe(query);
-                    lasgroupe=query;
-                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: "+query, Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: "+lasgroupe, Toast.LENGTH_SHORT).show();
+                    lasgroupe = query;
+                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + query, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + lasgroupe, Toast.LENGTH_SHORT).show();
                 }
 
                 UpdateBd(query, content);
-                Mainlessons = ParsJson(content, isEven(WeekNumberNow),_WEEK);
+                Mainlessons = ParsJson(content, isEven(WeekNumberNow), _WEEK);
                 SetWeek();
                 SetToday();
                 SetMonth();
