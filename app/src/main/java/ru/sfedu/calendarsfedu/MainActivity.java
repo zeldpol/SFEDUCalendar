@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.provider.SearchRecentSuggestions;
+import android.support.annotation.IntegerRes;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -45,6 +46,8 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.timessquare.CalendarPickerView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +59,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -65,6 +70,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -91,8 +97,6 @@ public class MainActivity extends AppCompatActivity
     public static String lasgroupe;
     public static String query;
 
-    public static int flag;
-
     public static final String HOST = "http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH = 6;
     public static final int USER_EMAIL_MIN_LENGTH = 6;
@@ -112,7 +116,8 @@ public class MainActivity extends AppCompatActivity
     public static RecyclerView mRecyclerViewToday;
     public static RecyclerView rv;
 
-
+    final int _WEEK = 2;
+    final int _MONTH = 3;
 
     private boolean emtypair = false;
     @Override
@@ -176,10 +181,10 @@ public class MainActivity extends AppCompatActivity
 
 
 
-              /*  if (isChecked)
-                    startActivity(intent);
+                if (isChecked)
+                    WeekNumberNow = 1;
                 else
-                    startActivity(intent);*/
+                    WeekNumberNow = 2;
             }
         });
 
@@ -188,6 +193,11 @@ public class MainActivity extends AppCompatActivity
         mSqLiteDatabase = mDatabaseHelper.getWritableDatabase();
 
         //   mSqLiteDatabase.delete("raspis", null, null);
+
+
+
+
+
     }
 
     private void ShowProgress(boolean show, String message, Context cont) {
@@ -301,15 +311,6 @@ public class MainActivity extends AppCompatActivity
             Intent intentSet = new Intent(MainActivity.this, RegActivity.class);
             startActivity(intentSet);
         }
-        if (!lasgroupe.isEmpty()) {
-            Log.wtf("UpdateG", "Neveru");
-            Log.wtf("UpdateG", lasgroupe);
-
-
-            GetJson JsonGetter = new GetJson();
-            JsonGetter.execute(lasgroupe);
-            return;
-        }
     }
 
     @Override
@@ -318,15 +319,14 @@ public class MainActivity extends AppCompatActivity
         if (mSettings.contains(APP_GROUPE)) {
             lasgroupe = mSettings.getString(APP_GROUPE, null);
             if (!lasgroupe.isEmpty()) {
-                Log.wtf("UpdateG", "Neveru");
-                Log.wtf("UpdateG", lasgroupe);
-
-
                 GetJson JsonGetter = new GetJson();
                 JsonGetter.execute(lasgroupe);
                 return;
             }
         }
+
+
+
     }
 
 
@@ -342,6 +342,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
+
+
+        super.onNewIntent(intent);
+        if(intent.getStringExtra("start")!=null)
+       if(intent.getStringExtra("start").toString().equals("click"))
+       {
+
+           if(query!=null)
+               lasgroupe=query;
+           else
+           if(lasgroupe!=null)
+               query=lasgroupe;
+           Calendar calender = new GregorianCalendar();;
+           calender.setTime(MainDate);
+
+           int WeekNumber = calender.get(Calendar.WEEK_OF_YEAR);
+           ParsJson(FindInBd(query), isEven(WeekNumber),_MONTH);
+
+           Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
+           intent2.putExtra("data", intent.getStringExtra("data").toString());
+           startActivity(intent2);
+       }
+
         setIntent(intent);
         getQuery(intent);
 
@@ -368,6 +391,8 @@ public class MainActivity extends AppCompatActivity
             CloseSearch();
 
         }
+
+
 
     }
 
@@ -589,7 +614,7 @@ public class MainActivity extends AppCompatActivity
         ScrollingActivity.newLesonMonth();
     }
 
-    List<Lesson> ParsJson(String json, int weekNumber) {
+    List<Lesson> ParsJson(String json, int weekNumber, int forwhat) {
         List<Lesson> lessons;
         List<Lesson> lessonsToday;
         List<Lesson> lessonsMonth;
@@ -597,7 +622,6 @@ public class MainActivity extends AppCompatActivity
         lessonsToday = new ArrayList<>();
         lessonsMonth = new ArrayList<>();
         String[] TimeA = new String[3];
-
         GregorianCalendar newCal = new GregorianCalendar();
         int DAYOFWEEK = newCal.get(Calendar.DAY_OF_WEEK);
         if (json.length() < 3)
@@ -632,6 +656,8 @@ public class MainActivity extends AppCompatActivity
                 week = schedule.getJSONObject("second");
 
             int parcount = 0;
+            Log.wtf("JSON", Integer.toString(DAYOFWEEK));
+            Log.wtf("JSON", Integer.toString(weekNumber));
 
             if(DAYOFWEEK==1)
             {
@@ -640,9 +666,9 @@ public class MainActivity extends AppCompatActivity
 
 
             for (int i = 0; i < 6; i++) {
-                // Log.wtf("JSON", week.getJSONObject(tday[i]).getString("day"));
 
 
+                if(forwhat==_WEEK)
                 lessons.add(new Lesson(week.getJSONObject(tday[i]).getString("day"), "", "", "", "", ""));
 
                 parcount = week.getJSONObject(tday[i]).getJSONArray("data").length();
@@ -657,19 +683,18 @@ public class MainActivity extends AppCompatActivity
                         event = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("event");
                         time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
                         TimeA = GetTime(time);
+
+                        if(forwhat==_WEEK)
                         lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
 
                         if(MainDate!=null) {
 
-                            Log.e("dateonmain",Integer.toString(MainDate.getDay()));
-
-                            Log.e("GGGGGG","WP");
-                            if (i+1 == MainDate.getDay())
+                            if (i+1 == MainDate.getDay() &&  forwhat== _MONTH)
                                 lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
 
                         }
 
-                        if (DAYOFWEEK - 2 == i)
+                        if (DAYOFWEEK - 2 == i && forwhat==_WEEK && weekNumber ==isEven(DAYOFWEEK))
                             lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0], TimeA[1], lasgroupe));
 
                     } else {
@@ -677,9 +702,10 @@ public class MainActivity extends AppCompatActivity
                         if (emtypair) {
                             time = week.getJSONObject(tday[i]).getJSONArray("data").getJSONObject(j).getString("time");
                             TimeA = GetTime(time);
+                            if(forwhat==_WEEK)
                             lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
 
-                            if (DAYOFWEEK == i - 2)
+                            if (DAYOFWEEK == i - 2 && forwhat==_WEEK && weekNumber ==isEven(DAYOFWEEK))
                                 lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0], TimeA[1], ""));
 
 
@@ -694,10 +720,13 @@ public class MainActivity extends AppCompatActivity
         } catch (JSONException e) {
             MainActivity.ShowDialog(MainActivity.this, "Error JSON parsing: " + e.getMessage(), 5000);
         }
-
-        Todaylessons = lessonsToday;
-        Mainlessons = lessons;
-        Monthlessons =lessonsMonth;
+        if(forwhat==_WEEK) {
+            if(weekNumber ==isEven(DAYOFWEEK))
+            Todaylessons = lessonsToday;
+            Mainlessons = lessons;
+        }
+        if(forwhat== _MONTH)
+        Monthlessons = lessonsMonth;
 
         return lessons;
     }
@@ -731,7 +760,7 @@ public class MainActivity extends AppCompatActivity
                     lasgroupe=query;
                 if(lasgroupe!=null)
                     query=lasgroupe;
-                Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow));
+                Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow),_WEEK);
                 SetWeek();
                 SetToday();
                 SetMonth();
@@ -765,7 +794,7 @@ public class MainActivity extends AppCompatActivity
                 }
 
                 UpdateBd(query, content);
-                Mainlessons = ParsJson(content, isEven(WeekNumberNow));
+                Mainlessons = ParsJson(content, isEven(WeekNumberNow),_WEEK);
                 SetWeek();
                 SetToday();
                 SetMonth();

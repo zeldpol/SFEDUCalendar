@@ -21,7 +21,6 @@ import com.squareup.timessquare.CalendarPickerView;
 
 import static android.widget.Toast.LENGTH_SHORT;
 import static ru.sfedu.calendarsfedu.MainActivity.MainDate;
-import static ru.sfedu.calendarsfedu.MainActivity.flag;
 
 
 public class MonthFragment extends Fragment{
@@ -50,7 +49,7 @@ public class MonthFragment extends Fragment{
     View viewer;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewer = (View) inflater.inflate(R.layout.fragment_month, container,
                 false);
@@ -82,12 +81,10 @@ public class MonthFragment extends Fragment{
             public void onDateSelected(Date date) {
                 MainDate = date;
 
-                Log.e("dateonclic",Integer.toString(MainDate.getDay()));
-
-                flag = 0;
                 DateFormat df = new SimpleDateFormat("d MMM yyyy");
                 String  data = df.format(calendar.getSelectedDate().getTime());
-                Intent intent = new Intent(getActivity(), ScrollingActivity.class);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("start", "click");
                 intent.putExtra("data", data);
                 startActivity(intent);
             }

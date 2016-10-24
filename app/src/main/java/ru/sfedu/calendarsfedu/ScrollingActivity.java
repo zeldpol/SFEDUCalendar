@@ -19,7 +19,6 @@ import static ru.sfedu.calendarsfedu.MainActivity.MainDate;
 import static ru.sfedu.calendarsfedu.MainActivity.Monthlessons;
 import static ru.sfedu.calendarsfedu.MainActivity.adapterMonth;
 import static ru.sfedu.calendarsfedu.MainActivity.adapterToday;
-import static ru.sfedu.calendarsfedu.MainActivity.flag;
 import static ru.sfedu.calendarsfedu.MainActivity.rv;
 
 
@@ -36,8 +35,6 @@ public class ScrollingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent intent = getIntent();
-
-        Toast.makeText(ScrollingActivity.this,Integer.toString(MainDate.getDay()), Toast.LENGTH_LONG).show();
         getSupportActionBar().setTitle(intent.getStringExtra("data"));
 
         Context context = this;
@@ -46,18 +43,6 @@ public class ScrollingActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(context);
         rv.setLayoutManager(llm);
         initializeAdapterMonth();
-
-
-
-        if (flag == 0) {
-            finish();
-            Log.e("Try","123131");
-            Intent intentSet = new Intent(ScrollingActivity.this, MainActivity.class);
-            startActivity(intentSet);
-            startActivity(intent);
-            flag++;
-        }
-        Log.e("Flag",Integer.toString(flag));
 
     }
 
