@@ -94,6 +94,9 @@ public class MainActivity extends AppCompatActivity
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String APP_GROUPE = "grupe";
+    public static final String APP_FNAME = "fname";
+    public static final String APP_SNAME = "sname";
+
     public static String lasgroupe;
     public static String query;
 
@@ -382,7 +385,7 @@ public class MainActivity extends AppCompatActivity
             GetJson JsonGetter = new GetJson();
             JsonGetter.execute(query);
             CloseSearch();
-
+            ShowProgress(true,"Загрузка..",MainActivity.this);
         }
 
 
@@ -617,6 +620,9 @@ public class MainActivity extends AppCompatActivity
         String[] TimeA = new String[3];
         GregorianCalendar newCal = new GregorianCalendar();
         int DAYOFWEEK = newCal.get(Calendar.DAY_OF_WEEK);
+        int WeekNow = isEven(newCal.get(Calendar.WEEK_OF_YEAR));
+
+
         if (json.length() < 3)
             return lessons;
 
@@ -649,7 +655,7 @@ public class MainActivity extends AppCompatActivity
                 week = schedule.getJSONObject("second");
 
             int parcount = 0;
-            Log.wtf("JSON", Integer.toString(DAYOFWEEK));
+            Log.wtf("JSON", Integer.toString(WeekNow));
             Log.wtf("JSON", Integer.toString(weekNumber));
 
             if (DAYOFWEEK == 1) {
@@ -684,7 +690,7 @@ public class MainActivity extends AppCompatActivity
 
                         }
 
-                        if (DAYOFWEEK - 2 == i && forwhat == _WEEK && weekNumber == isEven(DAYOFWEEK))
+                        if (DAYOFWEEK - 2 == i && forwhat == _WEEK && weekNumber == WeekNow)
                             lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1] , "", lasgroupe));
 
                     } else {
@@ -695,7 +701,7 @@ public class MainActivity extends AppCompatActivity
                             if (forwhat == _WEEK)
                                 lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
-                            if (DAYOFWEEK == i - 2 && forwhat == _WEEK && weekNumber == isEven(DAYOFWEEK))
+                            if (DAYOFWEEK - 2 == i  && forwhat == _WEEK && weekNumber == WeekNow)
                                 lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
 
@@ -711,7 +717,7 @@ public class MainActivity extends AppCompatActivity
             MainActivity.ShowDialog(MainActivity.this, "Error JSON parsing: " + e.getMessage(), 5000);
         }
         if (forwhat == _WEEK) {
-            if (weekNumber == isEven(DAYOFWEEK))
+            if (weekNumber == WeekNow)
                 Todaylessons = lessonsToday;
             Mainlessons = lessons;
         }
@@ -743,6 +749,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String content) {
 
+            ShowProgress(false,"Загрузка..",MainActivity.this);
 
             if (!content.contains("\"success\":")) {
 
