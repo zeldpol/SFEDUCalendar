@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import android.widget.TextView;
@@ -94,8 +95,6 @@ public class RegActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
 
         btn_registration.setOnClickListener(new View.OnClickListener() {
             @Override

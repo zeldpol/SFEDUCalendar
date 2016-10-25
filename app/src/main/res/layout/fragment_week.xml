@@ -49,6 +49,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="0dp"
+                        android:textStyle="bold"
                         android:text="Четная"
                         android:textSize="14dp" />
 
@@ -59,6 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:padding="0dp"
+                        android:textStyle="bold"
                         android:text="Нечетная"
                         android:textSize="14dp" />
                 </info.hoang8f.android.segmented.SegmentedGroup>
