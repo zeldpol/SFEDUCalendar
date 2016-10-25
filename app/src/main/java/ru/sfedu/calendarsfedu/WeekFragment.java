@@ -58,14 +58,8 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         segmented2.setOnCheckedChangeListener(this);
 
 
-  /*    if(isEven(WeekNumberNow)==0)
-      {
-          radioChetn.setChecked(true);
-      }
-        else
-      {
-          radioNeChetn.setChecked(true);
-      }*/
+
+
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeLayout.setOnRefreshListener(this);
@@ -86,7 +80,19 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public static void SetTecWeek(int number)
     {
+
         if(radioChetn!=null && radioNeChetn!=null) {
+
+            if(radioChetn.isChecked()==false && radioNeChetn.isChecked()==false) {
+
+                Log.wtf("SetTecWeek","setChecked");
+                if (isEven(WeekNumberNow) == 0) {
+                    radioChetn.setChecked(true);
+                } else {
+                    radioNeChetn.setChecked(true);
+                }
+            }
+
             if (number == 0) {
                 radioChetn.setText("Четная (тек.)");
                 radioNeChetn.setText("Нечетная");
@@ -103,7 +109,6 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         switch (checkedId) {
             case R.id.button21: {
                 WeekNumberNow = 1;
-                Toast.makeText(getActivity(), "Четная неделя", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.putExtra("updateWeek", "123");
                 startActivity(intent);
@@ -114,7 +119,6 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 WeekNumberNow = 2;
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                Toast.makeText(getActivity(), "Нечетная неделя", Toast.LENGTH_SHORT).show();
                 intent.putExtra("updateWeek", "123");
                 startActivity(intent);
                 break;

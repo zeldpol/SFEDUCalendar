@@ -491,6 +491,8 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new TodayFragmen(), "Сегодня");
         adapter.addFragment(new WeekFragment(), "Расписание");
         viewPager.setAdapter(adapter);
+
+        viewPager.setOffscreenPageLimit(5);
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

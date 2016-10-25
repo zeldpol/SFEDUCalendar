@@ -40,9 +40,9 @@ public class ScrollingActivity extends AppCompatActivity {
         {
             Log.wtf("Month",intent.getStringExtra("chetn"));
             if(intent.getStringExtra("chetn").equals("1"))
-                chetn = "Нечетная неделя ";
+                chetn = "Нечет. неделя ";
             else
-                chetn = "Четная неделя ";
+                chetn = "Чет. неделя ";
         }
 
 
