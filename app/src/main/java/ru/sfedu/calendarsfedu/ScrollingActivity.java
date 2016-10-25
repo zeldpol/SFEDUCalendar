@@ -35,7 +35,19 @@ public class ScrollingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent intent = getIntent();
-        getSupportActionBar().setTitle(intent.getStringExtra("data"));
+        String chetn="";
+        if(intent.getStringExtra("chetn")!=null)
+        {
+            Log.wtf("Month",intent.getStringExtra("chetn"));
+            if(intent.getStringExtra("chetn").equals("1"))
+                chetn = "Нечетная неделя ";
+            else
+                chetn = "Четная неделя ";
+        }
+
+
+        if(intent.getStringExtra("data")!=null)
+        getSupportActionBar().setTitle(chetn+intent.getStringExtra("data").toString());
 
         Context context = this;
 

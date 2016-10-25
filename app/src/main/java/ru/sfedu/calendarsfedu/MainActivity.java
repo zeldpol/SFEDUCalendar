@@ -71,6 +71,8 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ru.sfedu.calendarsfedu.WeekFragment.SetTecWeek;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mSqLiteDatabase;
     private ProgressDialog dialog;
     private Fragment weekFrag;
-    private int WeekNumberNow;
+    public static int WeekNumberNow;
 
     ViewPagerAdapter adapter;
 
@@ -213,13 +215,17 @@ public class MainActivity extends AppCompatActivity
             dialog.dismiss();
     }
 
-    private int isEven(int n) {
+    public static int isEven(int n) {
         if (n % 2 == 0) {
             return 1;
         } else {
             return 0;
         }
     }
+
+
+
+
 
     public void SaveToBd(String group, String info) {
 
@@ -327,6 +333,15 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void UpdateWeek()
+    {
+        if (query != null)
+            lasgroupe = query;
+        else if (lasgroupe != null)
+            query = lasgroupe;
+        ParsJson(FindInBd(query), isEven(WeekNumberNow), _WEEK);
+        SetWeek();
+    }
 
     @Override
     public void onBackPressed() {
@@ -340,9 +355,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onNewIntent(Intent intent) {
-
-
         super.onNewIntent(intent);
+
+
+
+        if (intent.getStringExtra("updateWeek") != null)
+        {
+            UpdateWeek();
+        }
+
         if (intent.getStringExtra("start") != null)
             if (intent.getStringExtra("start").toString().equals("click")) {
 
@@ -355,9 +376,11 @@ public class MainActivity extends AppCompatActivity
 
                 int WeekNumber = calender.get(Calendar.WEEK_OF_YEAR);
                 ParsJson(FindInBd(query), isEven(WeekNumber), _MONTH);
-
+                Log.wtf("KEKEKE", Integer.toString(WeekNumber));
                 Intent intent2 = new Intent(MainActivity.this, ScrollingActivity.class);
                 intent2.putExtra("data", intent.getStringExtra("data").toString());
+                intent2.putExtra("chetn", Integer.toString(isEven(WeekNumber)));
+
                 startActivity(intent2);
             }
 
@@ -596,7 +619,7 @@ public class MainActivity extends AppCompatActivity
     public void SetWeek() {
 
         WeekFragment fragment = (WeekFragment) adapter.mFragmentList.get(2);
-        fragment.newLeson(Mainlessons);
+        fragment.newLeson();
     }
 
     public void SetToday() {
@@ -622,6 +645,7 @@ public class MainActivity extends AppCompatActivity
         int DAYOFWEEK = newCal.get(Calendar.DAY_OF_WEEK);
         int WeekNow = isEven(newCal.get(Calendar.WEEK_OF_YEAR));
 
+        SetTecWeek(WeekNow);
 
         if (json.length() < 3)
             return lessons;
@@ -761,7 +785,6 @@ public class MainActivity extends AppCompatActivity
                 SetWeek();
                 SetToday();
                 SetMonth();
-                Log.wtf("EEwqeqwe", "Hff");
                 Toast.makeText(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -780,14 +803,14 @@ public class MainActivity extends AppCompatActivity
 
                 //  MainActivity.ShowDialog(MainActivity.this, content,5000);
 
-                if (query != null) {
+             /*   if (query != null) {
                     SaveLastGroupe(query);
                     lasgroupe = query;
                     Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + query, Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + lasgroupe, Toast.LENGTH_SHORT).show();
                 }
-
+    `           */
                 UpdateBd(query, content);
                 Mainlessons = ParsJson(content, isEven(WeekNumberNow), _WEEK);
                 SetWeek();

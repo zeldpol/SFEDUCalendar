@@ -1,6 +1,7 @@
 package ru.sfedu.calendarsfedu;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,15 +11,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.util.List;
 
+import info.hoang8f.android.segmented.SegmentedGroup;
+
+import static ru.sfedu.calendarsfedu.MainActivity.WeekNumberNow;
 import static ru.sfedu.calendarsfedu.MainActivity.adapterWeek;
+import static ru.sfedu.calendarsfedu.MainActivity.isEven;
 import static ru.sfedu.calendarsfedu.MainActivity.mRecyclerViewWeek;
 
 
-public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener,RadioGroup.OnCheckedChangeListener {
 
 
 
@@ -33,14 +40,32 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 
     SwipeRefreshLayout swipeLayout;
-
-
+    SegmentedGroup segmented2;
+    public static RadioButton radioChetn;
+    public static RadioButton radioNeChetn;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View  view = inflater.inflate(R.layout.fragment_week, null);
 
+
+
+        radioChetn = (RadioButton) view.findViewById(R.id.button21);
+        radioNeChetn = (RadioButton) view.findViewById(R.id.button22);
+
+        segmented2 = (SegmentedGroup) view.findViewById(R.id.segmented2);
+        segmented2.setOnCheckedChangeListener(this);
+
+
+  /*    if(isEven(WeekNumberNow)==0)
+      {
+          radioChetn.setChecked(true);
+      }
+        else
+      {
+          radioNeChetn.setChecked(true);
+      }*/
 
         swipeLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeLayout.setOnRefreshListener(this);
@@ -58,6 +83,44 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     }
 
+
+    public static void SetTecWeek(int number)
+    {
+        if(radioChetn!=null && radioNeChetn!=null) {
+            if (number == 0) {
+                radioChetn.setText("Четная(тек.)");
+                radioNeChetn.setText("Нечетная");
+            } else {
+                radioChetn.setText("Четная");
+                radioNeChetn.setText("Нечетная(тек.)");
+            }
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId) {
+            case R.id.button21: {
+                WeekNumberNow = 1;
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("updateWeek", "123");
+                startActivity(intent);
+
+                break;
+            }
+            case R.id.button22: {
+
+                WeekNumberNow = 2;
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra("updateWeek", "123");
+                startActivity(intent);
+                break;
+            }
+            default:
+                // Nothing to do
+        }
+    }
+
     public void onRefresh() {
         // говорим о том, что собираемся начать
         Toast.makeText(getActivity(), R.string.refresh_started, Toast.LENGTH_SHORT).show();
@@ -73,7 +136,7 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         }, 3000);
     }
-    public void newLeson(List<Lesson> newleson)
+    public void newLeson()
     {
         initializeAdapter();
         adapterWeek.notifyDataSetChanged();
