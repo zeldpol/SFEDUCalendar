@@ -64,7 +64,7 @@ public class AboutActivity extends AppCompatActivity {
                         .setWhen(System.currentTimeMillis())
                         .setAutoCancel(true)
                         .setContentTitle("Скоро пара!")
-                        .setContentText("Пара через: " + inter + "минут");
+                        .setContentText("Пара через: " + inter + " минут");
 
                 Notification notification = builder.build();
 

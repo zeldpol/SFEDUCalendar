@@ -88,11 +88,12 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     {
         if(radioChetn!=null && radioNeChetn!=null) {
             if (number == 0) {
-                radioChetn.setText("Четная(тек.)");
+                radioChetn.setText("Четная (тек.)");
                 radioNeChetn.setText("Нечетная");
+
             } else {
                 radioChetn.setText("Четная");
-                radioNeChetn.setText("Нечетная(тек.)");
+                radioNeChetn.setText("Нечетная (тек.)");
             }
         }
     }
@@ -102,6 +103,7 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         switch (checkedId) {
             case R.id.button21: {
                 WeekNumberNow = 1;
+                Toast.makeText(getActivity(), "Четная неделя", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.putExtra("updateWeek", "123");
                 startActivity(intent);
@@ -112,6 +114,7 @@ public class WeekFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 WeekNumberNow = 2;
                 Intent intent = new Intent(getActivity(), MainActivity.class);
+                Toast.makeText(getActivity(), "Нечетная неделя", Toast.LENGTH_SHORT).show();
                 intent.putExtra("updateWeek", "123");
                 startActivity(intent);
                 break;

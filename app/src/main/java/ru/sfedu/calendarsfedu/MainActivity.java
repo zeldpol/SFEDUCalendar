@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Календарь ЮФУ");
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Calendar calender = Calendar.getInstance();
 
@@ -186,10 +187,10 @@ public class MainActivity extends AppCompatActivity
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
 
-                if (isChecked)
+              /*  if (isChecked)
                     WeekNumberNow = 1;
                 else
-                    WeekNumberNow = 2;
+                    WeekNumberNow = 2;*/
             }
         });
 
@@ -222,9 +223,6 @@ public class MainActivity extends AppCompatActivity
             return 0;
         }
     }
-
-
-
 
 
     public void SaveToBd(String group, String info) {
@@ -294,7 +292,7 @@ public class MainActivity extends AppCompatActivity
             if (!groupe.isEmpty()) {
                 // Запоминаем данные
                 SharedPreferences.Editor editor = mSettings.edit();
-                Log.d("Save", groupe);
+                Log.e("Save", groupe);
                 editor.putString(APP_GROUPE, groupe);
                 editor.apply();
             }
@@ -333,8 +331,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void UpdateWeek()
-    {
+    private void UpdateWeek() {
         if (query != null)
             lasgroupe = query;
         else if (lasgroupe != null)
@@ -358,9 +355,7 @@ public class MainActivity extends AppCompatActivity
         super.onNewIntent(intent);
 
 
-
-        if (intent.getStringExtra("updateWeek") != null)
-        {
+        if (intent.getStringExtra("updateWeek") != null) {
             UpdateWeek();
         }
 
@@ -408,7 +403,7 @@ public class MainActivity extends AppCompatActivity
             GetJson JsonGetter = new GetJson();
             JsonGetter.execute(query);
             CloseSearch();
-            ShowProgress(true,"Загрузка..",MainActivity.this);
+            ShowProgress(true, "Загрузка..", MainActivity.this);
         }
 
 
@@ -645,6 +640,15 @@ public class MainActivity extends AppCompatActivity
         int DAYOFWEEK = newCal.get(Calendar.DAY_OF_WEEK);
         int WeekNow = isEven(newCal.get(Calendar.WEEK_OF_YEAR));
 
+        String groupe = "";
+
+        if (lasgroupe != null)
+            groupe = lasgroupe;
+
+        if (query != null)
+            groupe = query;
+
+
         SetTecWeek(WeekNow);
 
         if (json.length() < 3)
@@ -705,17 +709,17 @@ public class MainActivity extends AppCompatActivity
                         TimeA = GetTime(time);
 
                         if (forwhat == _WEEK)
-                            lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1] , "", lasgroupe));
+                            lessons.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1], "", groupe));
 
                         if (MainDate != null) {
 
                             if (i + 1 == MainDate.getDay() && forwhat == _MONTH)
-                                lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1], "", lasgroupe));
+                                lessonsMonth.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1], "", groupe));
 
                         }
 
                         if (DAYOFWEEK - 2 == i && forwhat == _WEEK && weekNumber == WeekNow)
-                            lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1] , "", lasgroupe));
+                            lessonsToday.add(new Lesson(GetLesonName(event) + "\n" + GetLesonType(event), Integer.toString(j + 1), GetTichers(event), TimeA[0] + "\n\n" + TimeA[1], "", groupe));
 
                     } else {
                         event = "";
@@ -725,7 +729,7 @@ public class MainActivity extends AppCompatActivity
                             if (forwhat == _WEEK)
                                 lessons.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
-                            if (DAYOFWEEK - 2 == i  && forwhat == _WEEK && weekNumber == WeekNow)
+                            if (DAYOFWEEK - 2 == i && forwhat == _WEEK && weekNumber == WeekNow)
                                 lessonsToday.add(new Lesson("", Integer.toString(j + 1), "", TimeA[0] + "\n\n" + TimeA[1], "", ""));
 
 
@@ -773,7 +777,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String content) {
 
-            ShowProgress(false,"Загрузка..",MainActivity.this);
+            ShowProgress(false, "Загрузка..", MainActivity.this);
 
             if (!content.contains("\"success\":")) {
 
@@ -781,10 +785,15 @@ public class MainActivity extends AppCompatActivity
                     lasgroupe = query;
                 if (lasgroupe != null)
                     query = lasgroupe;
-                Mainlessons = ParsJson(FindInBd(query), isEven(WeekNumberNow), _WEEK);
-                SetWeek();
-                SetToday();
-                SetMonth();
+                String bd = FindInBd(query);
+
+                if (!bd.equals("")) {
+                    SaveLastGroupe(query);
+                    Mainlessons = ParsJson(bd, isEven(WeekNumberNow), _WEEK);
+                    SetWeek();
+                    SetToday();
+                    SetMonth();
+                }
                 Toast.makeText(MainActivity.this, "Не удалось получить данные с сервера. Проверьте интернет соединение", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -803,14 +812,10 @@ public class MainActivity extends AppCompatActivity
 
                 //  MainActivity.ShowDialog(MainActivity.this, content,5000);
 
-             /*   if (query != null) {
-                    SaveLastGroupe(query);
-                    lasgroupe = query;
-                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + query, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Расписание обновлено, группа: " + lasgroupe, Toast.LENGTH_SHORT).show();
-                }
-    `           */
+
+                SaveLastGroupe(query);
+
+
                 UpdateBd(query, content);
                 Mainlessons = ParsJson(content, isEven(WeekNumberNow), _WEEK);
                 SetWeek();

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/refresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.sfedu.calendarsfedu.WeekFragment">
 
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/custom_background"
@@ -24,46 +23,44 @@
             >
 
             <LinearLayout
+                android:id="@+id/BUTTONS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/BUTTONS"
-                android:background="@color/colorPrimaryDark"
-                android:padding="0dp"
                 android:layout_margin="0dp"
-                >
+                android:background="@color/colorPrimaryDark"
+                android:orientation="horizontal"
+                android:padding="0dp">
+
                 <info.hoang8f.android.segmented.SegmentedGroup
                     android:id="@+id/segmented2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="1dp"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginTop="1dp"
                     android:orientation="horizontal"
                     segmentedgroup:sc_border_width="1dp"
-                    segmentedgroup:sc_corner_radius="5dp"
-                    segmentedgroup:sc_tint_color="#ff9105"
-                    segmentedgroup:sc_checked_text_color="@color/colorPrimaryDark">
+                    segmentedgroup:sc_checked_text_color="@color/colorPrimaryDark"
+                    segmentedgroup:sc_corner_radius="8dp"
+                    segmentedgroup:sc_tint_color="#ff9105">
 
                     <RadioButton
-                    android:layout_width="0dp"
-                    android:id="@+id/button21"
-                    android:layout_height="wrap_content"
-                    android:text="Четная"
-                    android:layout_weight="1"
-                    android:padding="0dp"
-                    style="@style/RadioButton"
-                    android:textSize="14dp" />
+                        android:id="@+id/button21"
+                        style="@style/RadioButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="0dp"
+                        android:text="Четная"
+                        android:textSize="14dp" />
 
                     <RadioButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/button22"
-                    android:text="Нечетная"
-                    android:layout_weight="1"
-                    android:padding="0dp"
-                    style="@style/RadioButton"
-                    android:textSize="14dp"/>
+                        android:id="@+id/button22"
+                        style="@style/RadioButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:padding="0dp"
+                        android:text="Нечетная"
+                        android:textSize="14dp" />
                 </info.hoang8f.android.segmented.SegmentedGroup>
             </LinearLayout>
 
@@ -71,8 +68,7 @@
                 android:id="@+id/RecyclerView_week"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/BUTTONS"
-                />
+                android:layout_below="@+id/BUTTONS" />
         </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
