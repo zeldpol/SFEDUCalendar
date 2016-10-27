@@ -71,6 +71,7 @@ import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static ru.sfedu.calendarsfedu.WeekFragment.SetTecWeek;
 
 
@@ -96,11 +97,15 @@ public class MainActivity extends AppCompatActivity
     public static String atoken = "";
     public static final String APP_TOKEN = "token";
     public static final String APP_GROUPE = "grupe";
-    public static final String APP_FNAME = "fname";
-    public static final String APP_SNAME = "sname";
+    public static final String APP_NAVIGROUPE = "navigroup";
+    public static final String APP_NAME = "fname";
+
 
     public static String lasgroupe;
     public static String query;
+    public static String NaviName;
+    public static String NaviGroup;
+
 
     public static final String HOST = "http://46.101.100.248:8000/";
     public static final int USER_PASSWORD_MIN_LENGTH = 6;
@@ -124,6 +129,9 @@ public class MainActivity extends AppCompatActivity
     final int _WEEK = 2;
     final int _MONTH = 3;
 
+    private TextView NaviTextGroup;
+    private TextView NaviTextName;
+
     private boolean emtypair = false;
 
     @Override
@@ -135,6 +143,10 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Календарь ЮФУ");
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+
+        NaviTextGroup = (TextView) findViewById(R.id.navitextgroup);
+        NaviTextName = (TextView) findViewById(R.id.navitextname);
 
         Calendar calender = Calendar.getInstance();
 
@@ -276,6 +288,26 @@ public class MainActivity extends AppCompatActivity
         return "";
     }
 
+    public static void SaveName() {
+        if (NaviGroup != null)
+            if (!NaviGroup.isEmpty()) {
+                // Запоминаем данные
+                SharedPreferences.Editor editor = mSettings.edit();
+                Log.e("Save group", NaviGroup);
+                editor.putString(APP_NAVIGROUPE, NaviGroup);
+                editor.apply();
+            }
+
+        if (NaviName != null)
+            if (!NaviName.isEmpty()){
+
+                SharedPreferences.Editor editor = mSettings.edit();
+                Log.e("Save name", NaviName);
+                editor.putString(APP_NAME, NaviName);
+                editor.apply();
+
+            }
+    }
     public static void SaveToken() {
         if (!atoken.isEmpty()) {
             // Запоминаем данные
@@ -324,10 +356,19 @@ public class MainActivity extends AppCompatActivity
             if (!lasgroupe.isEmpty()) {
                 GetJson JsonGetter = new GetJson();
                 JsonGetter.execute(lasgroupe);
-                return;
             }
         }
 
+        if (mSettings.contains(APP_NAME))
+            NaviName = mSettings.getString(APP_NAME, null);
+
+        if (mSettings.contains(APP_NAVIGROUPE))
+            NaviGroup = mSettings.getString(APP_NAVIGROUPE, null);
+
+        if ( NaviTextName != null)
+            NaviTextName.setText(NaviName);
+        if(NaviTextGroup != null)
+            NaviTextGroup.setText(NaviGroup);
 
     }
 
@@ -441,10 +482,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+      /*  if (id == R.id.action_settings) {
             Intent intentSet = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intentSet);
-        }
+        }*/
         if (id == R.id.action_about) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);

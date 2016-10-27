@@ -27,7 +27,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import static ru.sfedu.calendarsfedu.MainActivity.NaviGroup;
+import static ru.sfedu.calendarsfedu.MainActivity.NaviName;
 import static ru.sfedu.calendarsfedu.MainActivity.SaveLastGroupe;
+import static ru.sfedu.calendarsfedu.MainActivity.SaveName;
 import static ru.sfedu.calendarsfedu.MainActivity.lasgroupe;
 
 
@@ -49,6 +52,7 @@ public class RegActivity extends AppCompatActivity {
     private String password;
     private String group;
     private View focusView;
+
 
     public static boolean isEmailValid(String email) {
 
@@ -104,6 +108,12 @@ public class RegActivity extends AppCompatActivity {
                 email = Eemail.getText().toString();
                 password = Epassword.getText().toString();
                 group = Egroup.getText().toString();
+
+               NaviName = firstname + " " + surname;
+                if (group != null || !group.equals(""))
+                    NaviGroup = group;
+
+                SaveName();
 
                 if (!IsValid())
                     focusView.requestFocus();

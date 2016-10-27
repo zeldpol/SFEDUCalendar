@@ -17,6 +17,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import static ru.sfedu.calendarsfedu.MainActivity.NaviGroup;
+import static ru.sfedu.calendarsfedu.MainActivity.NaviName;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -55,6 +59,7 @@ public class AboutActivity extends AppCompatActivity {
 
                 Resources res = context.getResources();
                 Notification.Builder builder = new Notification.Builder(context);
+
 
                 builder.setContentIntent(contentIntent)
                         .setSmallIcon(R.drawable.whitelogo)
